@@ -1,11 +1,13 @@
+import 'package:dog_walker/models/order_model.dart';
 import 'package:dog_walker/screens/owner/payment/payment_screen.dart';
 import 'package:dog_walker/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
 
 class OwnerNotificationTile extends StatelessWidget {
-  const OwnerNotificationTile({Key? key}) : super(key: key);
-
+  const OwnerNotificationTile({Key? key, required this.order})
+      : super(key: key);
+  final OrderModel order;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -16,18 +18,18 @@ class OwnerNotificationTile extends StatelessWidget {
         child: Column(
           children: [
             Row(
-              children: const [
+              children: [
                 Text(
-                  'Milo',
-                  style: TextStyle(
+                  order.owner!.name!,
+                  style: const TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.w500,
                       fontSize: 16),
                 ),
-                Spacer(),
+                const Spacer(),
                 Text(
-                  '2hrs',
-                  style: TextStyle(
+                  '${order.totalTime}hrs',
+                  style: const TextStyle(
                     fontSize: 12,
                     color: Colors.black,
                   ),
@@ -39,16 +41,18 @@ class OwnerNotificationTile extends StatelessWidget {
             ),
             Row(
               children: [
-                const Text(
-                  '2.5 yrs EXP',
-                  style: TextStyle(
+                Text(
+                  '${order.owner!.age} yrs EXP',
+                  style: const TextStyle(
                     color: Colors.black,
                   ),
                 ),
                 Expanded(
                     child: CustomButton(
                   onPressed: () {
-                    Get.to(() => const PaymentScreen());
+                    Get.to(() => PaymentScreen(
+                          order: order,
+                        ));
                   },
                   radius: 2,
                   text: 'PAY',
@@ -56,9 +60,9 @@ class OwnerNotificationTile extends StatelessWidget {
                   margin: 30,
                   height: 40,
                 )),
-                const Text(
-                  '\$51.00',
-                  style: TextStyle(
+                Text(
+                  '\$${order.totalCost}',
+                  style: const TextStyle(
                     fontSize: 12,
                     color: Colors.black,
                   ),
@@ -68,9 +72,9 @@ class OwnerNotificationTile extends StatelessWidget {
             const SizedBox(
               height: 10,
             ),
-            const Text(
-              'Arrive at 7pm on 28th June',
-              style: TextStyle(color: Colors.black, fontSize: 12),
+            Text(
+              'Arrive at ${order.time} on ${order.orderDate}',
+              style: const TextStyle(color: Colors.black, fontSize: 12),
             ),
           ],
         ));

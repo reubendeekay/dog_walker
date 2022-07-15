@@ -1,18 +1,24 @@
 import 'package:dog_walker/constants.dart';
+import 'package:dog_walker/models/order_model.dart';
+import 'package:dog_walker/providers/walker_provider.dart';
 import 'package:dog_walker/screens/walker/dashboard/request_details_screen.dart';
 import 'package:dog_walker/widgets/custom_button.dart';
 import 'package:dog_walker/widgets/success_dialog_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
+import 'package:provider/provider.dart';
 
 class OwnerRequestCard extends StatelessWidget {
-  const OwnerRequestCard({Key? key}) : super(key: key);
+  const OwnerRequestCard({Key? key, required this.order}) : super(key: key);
+  final OrderModel order;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Get.to(() => const RequestDetailsScreen());
+        Get.to(() => RequestDetailsScreen(
+              order: order,
+            ));
       },
       child: Container(
         padding: const EdgeInsets.all(15),
@@ -26,8 +32,11 @@ class OwnerRequestCard extends StatelessWidget {
               children: [
                 SizedBox(
                   width: 100,
-                  height: 100,
-                  child: Image.asset('assets/images/red_dog.png'),
+                  height: 90,
+                  child: Image.network(
+                    order.owner!.image!,
+                    fit: BoxFit.cover,
+                  ),
                 ),
                 const SizedBox(
                   width: 15,
@@ -35,39 +44,39 @@ class OwnerRequestCard extends StatelessWidget {
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
+                    children: [
                       Text(
-                        'Milo',
-                        style: TextStyle(
+                        order.owner!.name!,
+                        style: const TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.w500,
                             fontSize: 16),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                       ),
                       Text(
-                        '2.5 yrs',
-                        style: TextStyle(
+                        '${order.owner!.age} yrs',
+                        style: const TextStyle(
                           fontSize: 12,
                           color: Colors.black,
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                       ),
                       Text(
-                        '3400 Chenagai Street',
-                        style: TextStyle(
+                        order.owner!.address!,
+                        style: const TextStyle(
                           color: Colors.black,
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       Text(
-                        'Arrive at 7pmon 20th July',
-                        style: TextStyle(
+                        'Arrive on ${order.orderDate} at ${order.time}',
+                        style: const TextStyle(
                           color: Colors.black,
                         ),
                       )
@@ -78,20 +87,20 @@ class OwnerRequestCard extends StatelessWidget {
                   width: 10,
                 ),
                 Column(
-                  children: const [
+                  children: [
                     Text(
-                      '2hrs',
-                      style: TextStyle(
+                      '${order.totalTime} hrs',
+                      style: const TextStyle(
                         fontSize: 12,
                         color: Colors.black,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     Text(
-                      '\$51.00',
-                      style: TextStyle(
+                      '\$${order.totalCost}',
+                      style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w500,
                         color: Colors.black,
@@ -101,37 +110,67 @@ class OwnerRequestCard extends StatelessWidget {
                 )
               ],
             ),
-            const SizedBox(
-              height: 10,
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: CustomButton(
-                    onPressed: () {
-                      Get.to(() => SuccessDialogScreen(
-                          title: 'Request\nSent',
-                          message:
-                              'Good work leads to more requests!!!\nHave a good day.',
-                          onComplete: () {}));
-                    },
-                    text: 'APPLY',
-                    textColor: Colors.white,
-                    color: kPrimaryColor,
-                    margin: 5,
+            if (order.status == 'pending')
+              const SizedBox(
+                height: 10,
+              ),
+            if (order.status == 'pending')
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomButton(
+                      onPressed: () async {
+                        try {
+                          await Provider.of<WalkerProvider>(context,
+                                  listen: false)
+                              .acceptRejectOrder(order.orderId!, true);
+
+                          Get.to(() => SuccessDialogScreen(
+                              title: 'Request\nSent',
+                              message:
+                                  'Good work leads to more requests!!!\nHave a good day.',
+                              onComplete: () {}));
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(e.toString()),
+                            ),
+                          );
+                        }
+                      },
+                      text: 'APPLY',
+                      textColor: Colors.white,
+                      color: kPrimaryColor,
+                      margin: 5,
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: CustomButton(
-                    onPressed: () {},
-                    text: 'REJECT',
-                    textColor: Colors.white,
-                    color: Colors.red,
-                    margin: 5,
+                  Expanded(
+                    child: CustomButton(
+                      onPressed: () async {
+                        try {
+                          await Provider.of<WalkerProvider>(context,
+                                  listen: false)
+                              .acceptRejectOrder(order.orderId!, false);
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(const SnackBar(
+                            content: Text('Request rejected'),
+                          ));
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(e.toString()),
+                            ),
+                          );
+                        }
+                      },
+                      text: 'REJECT',
+                      textColor: Colors.white,
+                      color: Colors.red,
+                      margin: 5,
+                    ),
                   ),
-                ),
-              ],
-            )
+                ],
+              )
           ],
         ),
       ),

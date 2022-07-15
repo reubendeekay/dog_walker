@@ -20,8 +20,8 @@ class AuthProvider with ChangeNotifier {
 
   Future<void> login(String email, String password, UserRole userRole) async {
     try {
-      await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email, password: password);
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: email.trim(), password: password.trim());
       await getCurrentUser(userRole);
 
       notifyListeners();
@@ -40,7 +40,8 @@ class AuthProvider with ChangeNotifier {
       if (UserRole.owner == userRole) {
         final userCredentials = await FirebaseAuth.instance
             .createUserWithEmailAndPassword(
-                email: ownerModel!.email!, password: ownerModel.password!);
+                email: ownerModel!.email!.trim(),
+                password: ownerModel.password!.trim());
         ownerModel.userId = userCredentials.user!.uid;
         ownerModel.id = userCredentials.user!.uid;
 
@@ -140,10 +141,13 @@ class AuthProvider with ChangeNotifier {
       await getCurrentUser(UserRole.owner);
       return UserRole.owner;
     } catch (error) {
+      print(error);
       try {
         await getCurrentUser(UserRole.walker);
-        return UserRole.owner;
+        return UserRole.walker;
       } catch (error) {
+        print(error);
+
         await getCurrentUser(UserRole.admin);
         return UserRole.admin;
       }

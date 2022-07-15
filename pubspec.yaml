@@ -44,6 +44,7 @@ dependencies:
   google_maps_flutter: ^2.1.8
   intl: ^0.17.0
   location: ^4.4.0
+  mobile_scanner: ^2.0.0
   pretty_qr_code: ^2.0.2
   provider: ^6.0.3
 

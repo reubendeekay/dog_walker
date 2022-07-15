@@ -1,13 +1,25 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dog_walker/constants.dart';
+import 'package:dog_walker/models/order_model.dart';
+import 'package:dog_walker/models/review_model.dart';
+import 'package:dog_walker/providers/owner_provider.dart';
 import 'package:dog_walker/widgets/custom_button.dart';
 import 'package:dog_walker/widgets/success_dialog_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/route_manager.dart';
+import 'package:provider/provider.dart';
 
-class FeedbackScreen extends StatelessWidget {
-  const FeedbackScreen({Key? key}) : super(key: key);
+class FeedbackScreen extends StatefulWidget {
+  const FeedbackScreen({Key? key, required this.order}) : super(key: key);
+  final OrderModel order;
+  @override
+  State<FeedbackScreen> createState() => _FeedbackScreenState();
+}
 
+class _FeedbackScreenState extends State<FeedbackScreen> {
+  double? rating;
+  String? feedback;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,7 +50,9 @@ class FeedbackScreen extends StatelessWidget {
               color: kPrimaryColor,
             ),
             onRatingUpdate: (rating) {
-              print(rating);
+              setState(() {
+                rating = rating;
+              });
             },
           ),
           const SizedBox(height: 20),
@@ -47,6 +61,11 @@ class FeedbackScreen extends StatelessWidget {
             child: TextFormField(
               maxLength: null,
               maxLines: null,
+              onChanged: (value) {
+                setState(() {
+                  feedback = value;
+                });
+              },
               decoration: const InputDecoration(
                 border: InputBorder.none,
                 hintText: 'Description',
@@ -58,7 +77,28 @@ class FeedbackScreen extends StatelessWidget {
           ),
           const SizedBox(height: 40),
           CustomButton(
-            onPressed: () {},
+            onPressed: () async {
+              final review = ReviewModel(
+                userId: widget.order.userId,
+                review: feedback,
+                rating: rating.toString(),
+                date: Timestamp.now(),
+                walkerId: widget.order.walkerId,
+                orderId: widget.order.orderId,
+              );
+
+              await Provider.of<OwnerProvider>(context, listen: false)
+                  .sendReview(review);
+              Get.to(() => SuccessDialogScreen(
+                    title: 'Success',
+                    message: 'Review sent successfully',
+                    onComplete: () {
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    },
+                  ));
+            },
             text: 'Submit',
             textColor: Colors.white,
             radius: 0,

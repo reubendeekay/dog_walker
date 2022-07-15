@@ -29,7 +29,7 @@ class CustomButton extends StatelessWidget {
       width: width ?? double.infinity,
       margin: EdgeInsets.symmetric(horizontal: margin ?? 20),
       child: RaisedButton(
-          onPressed: () => onPressed!(),
+          onPressed: onPressed == null ? null : () => onPressed!(),
           textColor: textColor ?? kSecondaryColor,
           color: color ?? kPrimaryColor,
           shape: RoundedRectangleBorder(

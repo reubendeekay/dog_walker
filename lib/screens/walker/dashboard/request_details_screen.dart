@@ -1,9 +1,13 @@
+import 'package:dog_walker/models/order_model.dart';
+import 'package:dog_walker/providers/walker_provider.dart';
 import 'package:dog_walker/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
+import 'package:provider/provider.dart';
 
 class RequestDetailsScreen extends StatelessWidget {
-  const RequestDetailsScreen({Key? key}) : super(key: key);
+  const RequestDetailsScreen({Key? key, required this.order}) : super(key: key);
+  final OrderModel order;
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +19,7 @@ class RequestDetailsScreen extends StatelessWidget {
           height: size.height * 0.2 + kToolbarHeight,
           width: double.infinity,
           child: Image.network(
-            'https://post.medicalnewstoday.com/wp-content/uploads/sites/3/2020/02/322868_1100-1100x628.jpg',
+            order.owner!.image!,
             fit: BoxFit.cover,
           ),
         ),
@@ -25,35 +29,36 @@ class RequestDetailsScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                children: const [
+                children: [
                   Text(
-                    'Milo',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    order.owner!.name!,
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.bold),
                   ),
-                  Spacer(),
-                  Text('Arrive at 7pm on 28th June')
+                  const Spacer(),
+                  Text('Arrive at ${order.time} on ${order.orderDate}')
                 ],
               ),
               const SizedBox(
                 height: 20,
               ),
               Row(
-                children: const [
+                children: [
                   Text(
-                    '\$51.00',
-                    style: TextStyle(fontSize: 20),
+                    '\$${order.totalCost}',
+                    style: const TextStyle(fontSize: 20),
                   ),
-                  Spacer(),
+                  const Spacer(),
                   Text(
-                    '2hrs',
+                    '${order.time}hrs',
                   ),
                 ],
               ),
-              const Center(
+              Center(
                 child: Padding(
-                  padding: EdgeInsets.only(top: 20),
+                  padding: const EdgeInsets.only(top: 20),
                   child: Text(
-                    '3480 Champlaing Street\n H3N2V4',
+                    order.owner!.address!,
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -81,18 +86,23 @@ class RequestDetailsScreen extends StatelessWidget {
             child: PrettyQr(
               typeNumber: 3,
               size: 200,
-              data: 'https://www.google.ru',
+              data: order.orderId!,
               errorCorrectLevel: QrErrorCorrectLevel.M,
               roundEdges: false,
             ),
           ),
         ),
         const Spacer(),
-        CustomButton(
-          onPressed: () {},
-          text: 'CONTINUE',
-          textColor: Colors.white,
-        ),
+        if (order.status == 'pending')
+          CustomButton(
+            onPressed: () async {
+              await Provider.of<WalkerProvider>(context, listen: false)
+                  .acceptRejectOrder(order.orderId!, true);
+              Navigator.pop(context);
+            },
+            text: 'CONTINUE',
+            textColor: Colors.white,
+          ),
         const SizedBox(
           height: 15,
         )

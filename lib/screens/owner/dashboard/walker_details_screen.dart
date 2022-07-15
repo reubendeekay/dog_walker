@@ -1,10 +1,14 @@
+import 'package:dog_walker/models/order_model.dart';
 import 'package:dog_walker/models/walker_model.dart';
+import 'package:dog_walker/providers/owner_provider.dart';
 import 'package:dog_walker/screens/owner/dashboard/widgets/hour_stepper.dart';
 import 'package:dog_walker/widgets/custom_button.dart';
 import 'package:dog_walker/widgets/success_dialog_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class WalkerDetailsScreen extends StatefulWidget {
   const WalkerDetailsScreen({Key? key, required this.walker}) : super(key: key);
@@ -82,12 +86,14 @@ class _WalkerDetailsScreenState extends State<WalkerDetailsScreen> {
                   ),
                   const Spacer(),
                   Column(
-                    children: const [
+                    children: [
                       Text(
-                        '3/08/22 to 9/08/22',
+                        widget.walker.from == 'Daily'
+                            ? 'Daily'
+                            : '${widget.walker.from} to ${widget.walker.to}',
                       ),
                       Text(
-                        '6pm to 10pm',
+                        widget.walker.timing!,
                       ),
                     ],
                   ),
@@ -120,7 +126,7 @@ class _WalkerDetailsScreenState extends State<WalkerDetailsScreen> {
                         height: 2.5,
                       ),
                       Text(
-                        '\$$totalAmount',
+                        '\$${totalAmount.toStringAsFixed(2)}',
                         style: const TextStyle(
                             fontSize: 20, fontWeight: FontWeight.w500),
                       ),
@@ -193,13 +199,34 @@ class _WalkerDetailsScreenState extends State<WalkerDetailsScreen> {
                 height: 30,
               ),
               CustomButton(
-                onPressed: () {
-                  Get.to(() => SuccessDialogScreen(
-                      title: 'Request\nSent',
-                      message:
-                          'We have sent the request to the walker.\nHe will soon catch jup!!',
-                      onComplete: () {}));
-                },
+                onPressed: selectedDate == null || selectedTime == null
+                    ? null
+                    : () async {
+                        final order = OrderModel(
+                          walkerId: widget.walker.userId,
+                          orderDate:
+                              DateFormat('dd/MM/yyyy').format(selectedDate!),
+                          time: selectedTime!.format(context),
+                          totalCost: totalAmount.toStringAsFixed(2),
+                          totalTime: hours.toString(),
+                          userId: FirebaseAuth.instance.currentUser!.uid,
+                        );
+                        try {
+                          await Provider.of<OwnerProvider>(context,
+                                  listen: false)
+                              .requestWalker(order);
+
+                          Get.to(() => SuccessDialogScreen(
+                              title: 'Request\nSent',
+                              message:
+                                  'We have sent the request to the walker.\nHe will soon catch jup!!',
+                              onComplete: () {}));
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text(e.toString()),
+                          ));
+                        }
+                      },
                 text: 'PROCEED',
                 textColor: Colors.white,
                 margin: 60,

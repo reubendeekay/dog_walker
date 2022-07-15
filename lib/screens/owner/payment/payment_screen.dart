@@ -1,11 +1,17 @@
 import 'package:dog_walker/constants.dart';
+import 'package:dog_walker/models/order_model.dart';
+import 'package:dog_walker/providers/owner_provider.dart';
+import 'package:dog_walker/screens/owner/features/feedback_screen.dart';
 import 'package:dog_walker/widgets/custom_button.dart';
 import 'package:dog_walker/widgets/custom_textfield.dart';
+import 'package:dog_walker/widgets/success_dialog_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/route_manager.dart';
+import 'package:provider/provider.dart';
 
 class PaymentScreen extends StatefulWidget {
-  const PaymentScreen({Key? key}) : super(key: key);
-
+  const PaymentScreen({Key? key, required this.order}) : super(key: key);
+  final OrderModel order;
   @override
   State<PaymentScreen> createState() => _PaymentScreenState();
 }
@@ -17,17 +23,17 @@ class _PaymentScreenState extends State<PaymentScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Payment'),
+        title: const Text('Payment'),
         automaticallyImplyLeading: false,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(
+          const Text(
             'Card Information',
             style: TextStyle(color: Colors.white, fontSize: 20),
           ),
-          SizedBox(
+          const SizedBox(
             height: 15,
           ),
           CustomTextField(
@@ -41,11 +47,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
           const SizedBox(
             height: 15,
           ),
-          Text(
+          const Text(
             'Card Details',
-            style: TextStyle(color: Colors.white, fontSize: 20),
+            style: const TextStyle(color: Colors.white, fontSize: 20),
           ),
-          SizedBox(
+          const SizedBox(
             height: 15,
           ),
           CustomTextField(
@@ -56,7 +62,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               });
             },
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Row(
@@ -86,11 +92,22 @@ class _PaymentScreenState extends State<PaymentScreen> {
               ),
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 15,
           ),
           CustomButton(
-            onPressed: () {},
+            onPressed: () async {
+              await Provider.of<OwnerProvider>(context, listen: false)
+                  .payForWalker(widget.order);
+              Get.to(() => SuccessDialogScreen(
+                    title: 'Payment\nSuccessful',
+                    message:
+                        'You have successfully paid for the walker. Review the walker after service is completed.',
+                    onComplete: () {
+                      Get.to(() => FeedbackScreen(order: widget.order));
+                    },
+                  ));
+            },
             text: 'CONTINUE',
             textColor: Colors.white,
             color: kPrimaryColor,

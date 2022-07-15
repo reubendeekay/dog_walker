@@ -1,18 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dog_walker/models/walker_model.dart';
-import 'package:dog_walker/providers/location_provider.dart';
 import 'package:dog_walker/screens/auth/splash_screen.dart';
+import 'package:dog_walker/screens/owner/dashboard/map_widget.dart';
 import 'package:dog_walker/screens/owner/dashboard/widgets/walker_tile.dart';
-import 'package:dog_walker/screens/owner/features/daily_walker_screen.dart';
 import 'package:dog_walker/screens/owner/features/favorite_walker_screen.dart';
-import 'package:dog_walker/screens/owner/features/feedback_screen.dart';
+
 import 'package:dog_walker/screens/owner/notifications/owner_notifications.dart';
 import 'package:dog_walker/widgets/custom_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:provider/provider.dart';
 
 class OwnerDashboard extends StatefulWidget {
   const OwnerDashboard({Key? key}) : super(key: key);
@@ -22,14 +19,8 @@ class OwnerDashboard extends StatefulWidget {
 }
 
 class _OwnerDashboardState extends State<OwnerDashboard> {
-  GoogleMapController? _controller;
-
-  Set<Marker> _markers = <Marker>{};
-
   @override
   Widget build(BuildContext context) {
-    final loc =
-        Provider.of<LocationProvider>(context, listen: false).locationData!;
     final size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
@@ -71,19 +62,7 @@ class _OwnerDashboardState extends State<OwnerDashboard> {
       ),
       body: Column(
         children: [
-          SizedBox(
-            height: size.height * 0.35,
-            child: GoogleMap(
-              // onMapCreated: _onMapCreated,
-              markers: _markers,
-              zoomControlsEnabled: false,
-              myLocationEnabled: true,
-
-              myLocationButtonEnabled: true,
-              initialCameraPosition: CameraPosition(
-                  target: LatLng(loc.latitude!, loc.longitude!), zoom: 15),
-            ),
-          ),
+          SizedBox(height: size.height * 0.35, child: MapWidget()),
           Expanded(
             child: Stack(
               children: [
