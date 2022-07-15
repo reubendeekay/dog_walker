@@ -1,6 +1,7 @@
 import 'package:dog_walker/constants.dart';
 import 'package:dog_walker/screens/walker/dashboard/request_details_screen.dart';
 import 'package:dog_walker/widgets/custom_button.dart';
+import 'package:dog_walker/widgets/success_dialog_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
 
@@ -107,7 +108,13 @@ class OwnerRequestCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: CustomButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Get.to(() => SuccessDialogScreen(
+                          title: 'Request\nSent',
+                          message:
+                              'Good work leads to more requests!!!\nHave a good day.',
+                          onComplete: () {}));
+                    },
                     text: 'APPLY',
                     textColor: Colors.white,
                     color: kPrimaryColor,

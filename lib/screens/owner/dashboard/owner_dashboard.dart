@@ -1,7 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dog_walker/models/walker_model.dart';
 import 'package:dog_walker/providers/location_provider.dart';
+import 'package:dog_walker/screens/auth/splash_screen.dart';
 import 'package:dog_walker/screens/owner/dashboard/widgets/walker_tile.dart';
+import 'package:dog_walker/screens/owner/features/daily_walker_screen.dart';
+import 'package:dog_walker/screens/owner/features/favorite_walker_screen.dart';
+import 'package:dog_walker/screens/owner/features/feedback_screen.dart';
+import 'package:dog_walker/screens/owner/notifications/owner_notifications.dart';
 import 'package:dog_walker/widgets/custom_button.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/route_manager.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -35,16 +44,29 @@ class _OwnerDashboardState extends State<OwnerDashboard> {
             ),
           ),
         ),
-        actions: const [
-          Icon(Icons.timelapse_sharp),
-          SizedBox(
+        actions: [
+          InkWell(
+              onTap: () {
+                Get.to(() => const OwnerNotificationsScreen());
+              },
+              child: const Icon(Icons.timelapse_sharp)),
+          const SizedBox(
             width: 10,
           ),
-          Icon(Icons.favorite),
-          SizedBox(
+          InkWell(
+              onTap: () {
+                Get.to(() => const FavoriteWalkerScreen());
+              },
+              child: const Icon(Icons.favorite)),
+          const SizedBox(
             width: 10,
           ),
-          Icon(Icons.filter_alt),
+          InkWell(
+              onTap: () async {
+                await FirebaseAuth.instance.signOut();
+                Get.offAll(() => const SplashScreen());
+              },
+              child: const Icon(Icons.filter_alt)),
         ],
       ),
       body: Column(
@@ -65,17 +87,34 @@ class _OwnerDashboardState extends State<OwnerDashboard> {
           Expanded(
             child: Stack(
               children: [
-                ListView(
-                  children: [
-                    SizedBox(
-                      height: 10,
-                    ),
-                    ...List.generate(
-                      10,
-                      (index) => WalkerTile(),
-                    ),
-                  ],
-                ),
+                StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('DogWalker')
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+
+                      if (snapshot.data!.docs.isEmpty) {
+                        return const Center(child: Text('No walkers found'));
+                      }
+
+                      return ListView(
+                        children: [
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          ...List.generate(
+                            snapshot.data!.docs.length,
+                            (index) => WalkerTile(
+                              walker: WalkerModel.fromJson(
+                                  snapshot.data!.docs[index].data()),
+                            ),
+                          ),
+                        ],
+                      );
+                    }),
                 Positioned(
                   left: 0,
                   right: 0,

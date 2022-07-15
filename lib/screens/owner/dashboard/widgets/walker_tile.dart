@@ -1,15 +1,20 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dog_walker/models/walker_model.dart';
 import 'package:dog_walker/screens/owner/dashboard/walker_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
 
 class WalkerTile extends StatelessWidget {
-  const WalkerTile({Key? key}) : super(key: key);
+  const WalkerTile({Key? key, required this.walker}) : super(key: key);
+  final WalkerModel walker;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Get.to(() => const WalkerDetailsScreen());
+        Get.to(() => WalkerDetailsScreen(
+              walker: walker,
+            ));
       },
       child: Container(
         padding: const EdgeInsets.all(15),
@@ -23,9 +28,13 @@ class WalkerTile extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const CircleAvatar(
-                  radius: 30,
-                ),
+                CircleAvatar(
+                    radius: 30,
+                    backgroundImage: CachedNetworkImageProvider(
+                      walker.image!.isEmpty
+                          ? 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541'
+                          : walker.image!,
+                    )),
                 const SizedBox(
                   width: 15,
                 ),
@@ -33,7 +42,7 @@ class WalkerTile extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Walker Name',
+                      Text(walker.name ?? 'Walker Name',
                           style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
@@ -42,7 +51,7 @@ class WalkerTile extends StatelessWidget {
                         height: 5,
                       ),
                       Row(
-                        children: const [
+                        children: [
                           Icon(
                             Icons.star,
                             color: Colors.amber,
@@ -51,7 +60,7 @@ class WalkerTile extends StatelessWidget {
                           SizedBox(
                             width: 2.5,
                           ),
-                          Text('4.5',
+                          Text(walker.ratings!.toStringAsFixed(1),
                               style:
                                   TextStyle(fontSize: 12, color: Colors.black)),
                         ],
@@ -61,12 +70,14 @@ class WalkerTile extends StatelessWidget {
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
-                  children: const [
-                    Text('4.5 yrs EXP', style: TextStyle(color: Colors.black)),
+                  children: [
+                    Text('${walker.experience} yrs EXP',
+                        style: TextStyle(color: Colors.black)),
                     SizedBox(
                       height: 10,
                     ),
-                    Text('\$20/hr', style: TextStyle(color: Colors.black)),
+                    Text('\$${walker.hourlyRate}/hr',
+                        style: TextStyle(color: Colors.black)),
                   ],
                 )
               ],

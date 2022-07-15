@@ -9,27 +9,31 @@ class CustomButton extends StatelessWidget {
       this.color,
       this.textColor,
       this.margin,
+      this.height,
+      this.radius,
       this.width})
       : super(key: key);
   final String text;
-  final Function onPressed;
+  final Function? onPressed;
   final Color? color;
   final double? width;
   final Color? textColor;
   final double? margin;
+  final double? radius;
+  final double? height;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 45,
+      height: height ?? 45,
       width: width ?? double.infinity,
       margin: EdgeInsets.symmetric(horizontal: margin ?? 20),
       child: RaisedButton(
-          onPressed: () => onPressed(),
+          onPressed: () => onPressed!(),
           textColor: textColor ?? kSecondaryColor,
           color: color ?? kPrimaryColor,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(radius ?? 10),
           ),
           child: Text(text)),
     );

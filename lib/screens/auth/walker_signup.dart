@@ -1,10 +1,18 @@
+import 'dart:io';
+
 import 'package:dog_walker/constants.dart';
+import 'package:dog_walker/models/walker_model.dart';
+import 'package:dog_walker/providers/auth_provider.dart';
+import 'package:dog_walker/providers/location_provider.dart';
+import 'package:dog_walker/screens/auth/login_screen.dart';
 import 'package:dog_walker/screens/owner/dashboard/owner_dashboard.dart';
 import 'package:dog_walker/screens/walker/dashboard/walker_dashboard.dart';
 import 'package:dog_walker/widgets/custom_button.dart';
 import 'package:dog_walker/widgets/custom_textfield.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
+import 'package:provider/provider.dart';
 
 class WalkerSignupScreen extends StatefulWidget {
   const WalkerSignupScreen({Key? key}) : super(key: key);
@@ -22,12 +30,15 @@ class _WalkerSignupScreenState extends State<WalkerSignupScreen> {
       password,
       confirmPassword,
       from,
+      email,
       to,
-      address;
+      timing;
   int selectedAvailability = 0;
+  File? profileFile;
 
   @override
   Widget build(BuildContext context) {
+    final locData = Provider.of<LocationProvider>(context).locationData!;
     return Scaffold(
       body: ListView(
         padding: const EdgeInsets.symmetric(
@@ -40,14 +51,31 @@ class _WalkerSignupScreenState extends State<WalkerSignupScreen> {
               style: TextStyle(fontSize: 20, color: kPrimaryColor)),
           const SizedBox(height: 40),
           Center(
-            child: Stack(
-              children: const [
-                CircleAvatar(
-                  radius: 40,
-                ),
-                Positioned(
-                    bottom: 0, right: 0, child: Icon(Icons.camera_alt_rounded)),
-              ],
+            child: GestureDetector(
+              onTap: () async {
+                FilePickerResult? result =
+                    await FilePicker.platform.pickFiles(allowMultiple: false);
+
+                if (result != null) {
+                  profileFile = File(result.files.single.path!);
+                  setState(() {});
+                } else {
+                  // User canceled the picker
+                }
+              },
+              child: Stack(
+                children: [
+                  CircleAvatar(
+                    radius: 40,
+                    backgroundImage:
+                        profileFile == null ? null : FileImage(profileFile!),
+                  ),
+                  const Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Icon(Icons.camera_alt_rounded)),
+                ],
+              ),
             ),
           ),
           const SizedBox(
@@ -58,6 +86,17 @@ class _WalkerSignupScreenState extends State<WalkerSignupScreen> {
             onChanged: (value) {
               setState(() {
                 name = value;
+              });
+            },
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          CustomTextField(
+            hintText: 'Email',
+            onChanged: (value) {
+              setState(() {
+                email = value;
               });
             },
           ),
@@ -151,7 +190,7 @@ class _WalkerSignupScreenState extends State<WalkerSignupScreen> {
             hintText: 'Timing',
             onChanged: (value) {
               setState(() {
-                address = value;
+                timing = value;
               });
             },
           ),
@@ -160,6 +199,7 @@ class _WalkerSignupScreenState extends State<WalkerSignupScreen> {
           ),
           CustomTextField(
             hintText: 'Description',
+            isInfinite: true,
             onChanged: (value) {
               setState(() {
                 description = value;
@@ -192,8 +232,35 @@ class _WalkerSignupScreenState extends State<WalkerSignupScreen> {
             height: 10,
           ),
           CustomButton(
-            onPressed: () {
-              Get.to(() => const WalkerDashboard());
+            onPressed: () async {
+              final walker = WalkerModel(
+                  name: name,
+                  experience: experience,
+                  hourlyRate: hourlyRate,
+                  description: description,
+                  password: password,
+                  from: selectedAvailability == 0 ? 'Daily' : from,
+                  to: selectedAvailability == 0 ? 'Daily' : to,
+                  long: locData.longitude,
+                  lat: locData.latitude,
+                  email: email,
+                  enabled: true,
+                  isAvailable: true,
+                  ratings: 0,
+                  reserved: false,
+                  timing: timing,
+                  userType: 'walker');
+              try {
+                await Provider.of<AuthProvider>(context, listen: false)
+                    .register(
+                        userRole: UserRole.walker,
+                        walkerModel: walker,
+                        profileFile: profileFile!);
+
+                Get.offAll(() => const WalkerDashboard());
+              } catch (e) {
+                print(e);
+              }
             },
             text: 'REGISTER',
             textColor: Colors.white,

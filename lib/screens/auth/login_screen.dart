@@ -1,4 +1,5 @@
 import 'package:dog_walker/constants.dart';
+import 'package:dog_walker/providers/auth_provider.dart';
 import 'package:dog_walker/screens/auth/forgot_password_dialog.dart';
 import 'package:dog_walker/screens/auth/owner_signup.dart';
 import 'package:dog_walker/screens/auth/walker_signup.dart';
@@ -9,6 +10,7 @@ import 'package:dog_walker/widgets/custom_textfield.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
+import 'package:provider/provider.dart';
 
 enum UserRole { owner, walker, admin }
 
@@ -73,12 +75,21 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         const SizedBox(height: 40),
         CustomButton(
-          onPressed: () {
-            if (widget.role == UserRole.owner) {
-              Get.to(() => const OwnerDashboard());
-            } else if (widget.role == UserRole.walker) {
-              Get.to(() => const WalkerDashboard());
-            } else {}
+          onPressed: () async {
+            try {
+              await Provider.of<AuthProvider>(context, listen: false)
+                  .login(email!, password!, widget.role);
+
+              if (widget.role == UserRole.owner) {
+                Get.offAll(() => const OwnerDashboard());
+              } else if (widget.role == UserRole.walker) {
+                Get.offAll(() => const WalkerDashboard());
+              } else {}
+            } catch (e) {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(e.toString()),
+              ));
+            }
           },
           text: 'Login',
           margin: 0,

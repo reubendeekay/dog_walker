@@ -9,6 +9,7 @@ class CustomTextField extends StatelessWidget {
       this.obscureText = false,
       this.controller,
       this.validator,
+      this.isInfinite = false,
       this.keyboardType,
       this.fillColor})
       : super(key: key);
@@ -17,6 +18,7 @@ class CustomTextField extends StatelessWidget {
   final TextEditingController? controller;
   final TextInputType? keyboardType;
   final bool obscureText;
+  final bool isInfinite;
   final Function(String val)? onChanged;
   final String? Function(String? val)? validator;
   final Color? fillColor;
@@ -29,6 +31,8 @@ class CustomTextField extends StatelessWidget {
         controller: controller,
         keyboardType: keyboardType,
         obscureText: obscureText,
+        maxLength: null,
+        maxLines: isInfinite ? null : 1,
         onChanged: onChanged,
         decoration: InputDecoration(
           contentPadding: const EdgeInsets.symmetric(
