@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dog_walker/models/walker_model.dart';
 import 'package:dog_walker/screens/auth/splash_screen.dart';
 import 'package:dog_walker/screens/owner/dashboard/map_widget.dart';
+import 'package:dog_walker/screens/owner/dashboard/qr_screen.dart';
 import 'package:dog_walker/screens/owner/dashboard/widgets/walker_tile.dart';
 import 'package:dog_walker/screens/owner/features/favorite_walker_screen.dart';
 
@@ -40,7 +41,7 @@ class _OwnerDashboardState extends State<OwnerDashboard> {
               onTap: () {
                 Get.to(() => const OwnerNotificationsScreen());
               },
-              child: const Icon(Icons.timelapse_sharp)),
+              child: const Icon(Icons.notifications)),
           const SizedBox(
             width: 10,
           ),
@@ -57,12 +58,12 @@ class _OwnerDashboardState extends State<OwnerDashboard> {
                 await FirebaseAuth.instance.signOut();
                 Get.offAll(() => const SplashScreen());
               },
-              child: const Icon(Icons.filter_alt)),
+              child: const Icon(Icons.logout)),
         ],
       ),
       body: Column(
         children: [
-          SizedBox(height: size.height * 0.35, child: MapWidget()),
+          SizedBox(height: size.height * 0.35, child: const MapWidget()),
           Expanded(
             child: Stack(
               children: [
@@ -100,7 +101,9 @@ class _OwnerDashboardState extends State<OwnerDashboard> {
                   bottom: 15,
                   child: CustomButton(
                     text: 'Verify Walker',
-                    onPressed: () {},
+                    onPressed: () {
+                      Get.to(() => const QrScreen());
+                    },
                     color: Colors.blue[900],
                     textColor: Colors.white,
                     margin: 50,
