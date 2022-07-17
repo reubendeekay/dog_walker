@@ -1,9 +1,11 @@
 import 'package:dog_walker/constants.dart';
 import 'package:dog_walker/firebase_options.dart';
+import 'package:dog_walker/providers/admin_provider.dart';
 import 'package:dog_walker/providers/auth_provider.dart';
 import 'package:dog_walker/providers/location_provider.dart';
 import 'package:dog_walker/providers/owner_provider.dart';
 import 'package:dog_walker/providers/walker_provider.dart';
+import 'package:dog_walker/screens/admin/admin_dashboard.dart';
 import 'package:dog_walker/screens/auth/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +30,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => WalkerProvider()),
         ChangeNotifierProvider(create: (_) => OwnerProvider()),
+        ChangeNotifierProvider(create: (_) => AdminProvider()),
       ],
       child: GetMaterialApp(
         title: 'Dog Walker',

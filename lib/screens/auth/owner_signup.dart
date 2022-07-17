@@ -13,7 +13,8 @@ import 'package:get/route_manager.dart';
 import 'package:provider/provider.dart';
 
 class OwnerSignup extends StatefulWidget {
-  const OwnerSignup({Key? key}) : super(key: key);
+  const OwnerSignup({Key? key, this.isFacebookLogin = false}) : super(key: key);
+  final bool isFacebookLogin;
 
   @override
   State<OwnerSignup> createState() => _OwnerSignupState();

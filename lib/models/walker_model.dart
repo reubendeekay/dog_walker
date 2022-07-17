@@ -1,23 +1,23 @@
 class WalkerModel {
-  final bool? isAvailable;
-  final String? userType;
+  bool? isAvailable;
+  String? userType;
   String? userId;
-  final String? name;
-  final String? description;
-  final String? email;
-  final String? experience;
-  final String? hourlyRate;
+  String? name;
+  String? description;
+  String? email;
+  String? experience;
+  String? hourlyRate;
   String? image;
-  final bool? enabled;
-  final String? password;
-  final bool? reserved;
-  final String? timing;
+  bool? enabled;
+  String? password;
+  bool? reserved;
+  String? timing;
   String? id;
-  final double? lat;
-  final double? long;
-  final String? from;
-  final String? to;
-  final double? ratings;
+  double? lat;
+  double? long;
+  String? from;
+  String? to;
+  double? ratings;
 
   WalkerModel(
       {this.isAvailable,
@@ -31,7 +31,7 @@ class WalkerModel {
       this.image,
       this.enabled,
       this.password,
-      this.reserved,
+      this.reserved = true,
       this.timing,
       this.ratings = 0,
       this.id,
@@ -72,9 +72,8 @@ class WalkerModel {
       description: json['user_description'],
       email: json['user_email'],
       experience: json['experience'],
-      hourlyRate: json['user_hourly_rate'],
+      hourlyRate: json['user_hourly_rate'].toString(),
       image: json['user_image'],
-      timing: json['timing'],
       lat: double.parse(json['lat'].toString()),
       long: double.parse(json['lng'].toString()),
       from: json['timingFrom'],

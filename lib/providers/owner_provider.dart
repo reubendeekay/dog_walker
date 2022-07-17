@@ -14,9 +14,14 @@ class OwnerProvider with ChangeNotifier {
   }
 
   Future<void> requestWalker(OrderModel order) async {
+    final user_Id = await FirebaseFirestore.instance
+        .collection('DogWalker')
+        .where('user_id', isEqualTo: order.walkerId)
+        .get()
+        .then((value) => value.docs.first.id);
     final ref = FirebaseFirestore.instance
         .collection('DogWalker')
-        .doc(order.walkerId)
+        .doc(user_Id)
         .collection('OwnerRequest');
     final id = ref.id;
     order.orderId = id;
@@ -31,18 +36,29 @@ class OwnerProvider with ChangeNotifier {
 
   Future<void> getNotifications() async {
     final uid = FirebaseAuth.instance.currentUser!.uid;
+    final userId = await FirebaseFirestore.instance
+        .collection('DogOwner')
+        .where('user_id', isEqualTo: uid)
+        .get()
+        .then((value) => value.docs.first.id);
     final ref = FirebaseFirestore.instance
         .collection('DogOwner')
-        .doc(uid)
+        .doc(userId)
         .collection('WalkerAccepted');
     final data = await ref.where('status', isEqualTo: 'paid').get();
   }
 
   Future<void> payForWalker(OrderModel order) async {
     final uid = FirebaseAuth.instance.currentUser!.uid;
+
+    final userId = await FirebaseFirestore.instance
+        .collection('DogOwner')
+        .where('user_id', isEqualTo: uid)
+        .get()
+        .then((value) => value.docs.first.id);
     await FirebaseFirestore.instance
         .collection('DogOwner')
-        .doc(uid)
+        .doc(userId)
         .collection('WalkerAccepted')
         .doc(order.orderId)
         .update({
@@ -59,9 +75,14 @@ class OwnerProvider with ChangeNotifier {
   }
 
   Future<void> sendReview(ReviewModel review) async {
+    final userId = await FirebaseFirestore.instance
+        .collection('DogWalker')
+        .where('user_id', isEqualTo: review.walkerId)
+        .get()
+        .then((value) => value.docs.first.id);
     await FirebaseFirestore.instance
         .collection('DogWalker')
-        .doc(review.walkerId)
+        .doc(userId)
         .collection('Reviews')
         .doc(review.orderId)
         .set(review.toJson());
@@ -74,10 +95,14 @@ class OwnerProvider with ChangeNotifier {
         .doc(orderId)
         .get();
     final order = OrderModel.fromJson(orderData);
-
+    final walkerId = await FirebaseFirestore.instance
+        .collection('DogWalker')
+        .where('user_id', isEqualTo: order.walkerId)
+        .get()
+        .then((value) => value.docs.first.id);
     final walkerData = await FirebaseFirestore.instance
         .collection('DogWalker')
-        .doc(order.walkerId)
+        .doc(walkerId)
         .get();
 
     final walker = WalkerModel.fromJson(walkerData);

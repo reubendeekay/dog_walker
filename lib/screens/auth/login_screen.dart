@@ -1,5 +1,7 @@
 import 'package:dog_walker/constants.dart';
 import 'package:dog_walker/providers/auth_provider.dart';
+import 'package:dog_walker/screens/admin/admin_dashboard.dart';
+import 'package:dog_walker/screens/auth/admin_signup.dart';
 import 'package:dog_walker/screens/auth/forgot_password_dialog.dart';
 import 'package:dog_walker/screens/auth/owner_signup.dart';
 import 'package:dog_walker/screens/auth/walker_signup.dart';
@@ -9,6 +11,7 @@ import 'package:dog_walker/widgets/custom_button.dart';
 import 'package:dog_walker/widgets/custom_textfield.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/route_manager.dart';
 import 'package:provider/provider.dart';
 
@@ -74,25 +77,63 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
         const SizedBox(height: 40),
-        CustomButton(
-          onPressed: () async {
-            try {
-              await Provider.of<AuthProvider>(context, listen: false)
-                  .login(email!, password!, widget.role);
+        Row(
+          children: [
+            Expanded(
+              child: CustomButton(
+                onPressed: () async {
+                  try {
+                    await Provider.of<AuthProvider>(context, listen: false)
+                        .login(email!, password!, widget.role);
 
-              if (widget.role == UserRole.owner) {
-                Get.offAll(() => const OwnerDashboard());
-              } else if (widget.role == UserRole.walker) {
-                Get.offAll(() => const WalkerDashboard());
-              } else {}
-            } catch (e) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text(e.toString()),
-              ));
-            }
-          },
-          text: 'Login',
-          margin: 0,
+                    if (widget.role == UserRole.owner) {
+                      Get.offAll(() => const OwnerDashboard());
+                    } else if (widget.role == UserRole.walker) {
+                      Get.offAll(() => const WalkerDashboard());
+                    } else {
+                      Get.offAll(() => const AdminDashboard());
+                    }
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(e.toString()),
+                    ));
+                  }
+                },
+                text: 'Login',
+                margin: 0,
+              ),
+            ),
+            const SizedBox(
+              width: 15,
+            ),
+            InkWell(
+              onTap: () async {
+                try {
+                  await Provider.of<AuthProvider>(context, listen: false)
+                      .signInWithFacebook(userRole: widget.role);
+                  if (widget.role == UserRole.walker) {
+                    Get.to(() => const WalkerSignupScreen(
+                          isFacebookLogin: true,
+                        ));
+                  } else if (widget.role == UserRole.owner) {
+                    Get.offAll(() => const OwnerDashboard());
+                  }
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(e.toString()),
+                  ));
+                }
+              },
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                    color: Colors.blue[900], shape: BoxShape.circle),
+                child: const Icon(
+                  FontAwesomeIcons.facebookF,
+                ),
+              ),
+            )
+          ],
         ),
         const SizedBox(height: 40),
         Center(
@@ -107,7 +148,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         Get.to(() => const OwnerSignup());
                       } else if (widget.role == UserRole.walker) {
                         Get.to(() => const WalkerSignupScreen());
-                      } else {}
+                      } else {
+                        Get.to(() => const AdminSignup());
+                      }
                     },
                   style: const TextStyle(decoration: TextDecoration.underline))
             ])),

@@ -15,7 +15,9 @@ import 'package:get/route_manager.dart';
 import 'package:provider/provider.dart';
 
 class WalkerSignupScreen extends StatefulWidget {
-  const WalkerSignupScreen({Key? key}) : super(key: key);
+  const WalkerSignupScreen({Key? key, this.isFacebookLogin = false})
+      : super(key: key);
+  final bool isFacebookLogin;
 
   @override
   State<WalkerSignupScreen> createState() => _WalkerSignupScreenState();
@@ -50,37 +52,39 @@ class _WalkerSignupScreenState extends State<WalkerSignupScreen> {
           Text('Lets Go!!\nFill in your details to get started.',
               style: TextStyle(fontSize: 20, color: kPrimaryColor)),
           const SizedBox(height: 40),
-          Center(
-            child: GestureDetector(
-              onTap: () async {
-                FilePickerResult? result =
-                    await FilePicker.platform.pickFiles(allowMultiple: false);
+          if (!widget.isFacebookLogin)
+            Center(
+              child: GestureDetector(
+                onTap: () async {
+                  FilePickerResult? result =
+                      await FilePicker.platform.pickFiles(allowMultiple: false);
 
-                if (result != null) {
-                  profileFile = File(result.files.single.path!);
-                  setState(() {});
-                } else {
-                  // User canceled the picker
-                }
-              },
-              child: Stack(
-                children: [
-                  CircleAvatar(
-                    radius: 40,
-                    backgroundImage:
-                        profileFile == null ? null : FileImage(profileFile!),
-                  ),
-                  const Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: Icon(Icons.camera_alt_rounded)),
-                ],
+                  if (result != null) {
+                    profileFile = File(result.files.single.path!);
+                    setState(() {});
+                  } else {
+                    // User canceled the picker
+                  }
+                },
+                child: Stack(
+                  children: [
+                    CircleAvatar(
+                      radius: 40,
+                      backgroundImage:
+                          profileFile == null ? null : FileImage(profileFile!),
+                    ),
+                    const Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Icon(Icons.camera_alt_rounded)),
+                  ],
+                ),
               ),
             ),
-          ),
-          const SizedBox(
-            height: 30,
-          ),
+          if (!widget.isFacebookLogin)
+            const SizedBox(
+              height: 30,
+            ),
           CustomTextField(
             hintText: 'Name',
             onChanged: (value) {
@@ -89,20 +93,23 @@ class _WalkerSignupScreenState extends State<WalkerSignupScreen> {
               });
             },
           ),
-          const SizedBox(
-            height: 10,
-          ),
-          CustomTextField(
-            hintText: 'Email',
-            onChanged: (value) {
-              setState(() {
-                email = value;
-              });
-            },
-          ),
-          const SizedBox(
-            height: 10,
-          ),
+          if (!widget.isFacebookLogin)
+            const SizedBox(
+              height: 10,
+            ),
+          if (!widget.isFacebookLogin)
+            CustomTextField(
+              hintText: 'Email',
+              onChanged: (value) {
+                setState(() {
+                  email = value;
+                });
+              },
+            ),
+          if (!widget.isFacebookLogin)
+            const SizedBox(
+              height: 10,
+            ),
           CustomTextField(
             hintText: 'Experience',
             onChanged: (value) {
@@ -209,17 +216,19 @@ class _WalkerSignupScreenState extends State<WalkerSignupScreen> {
           const SizedBox(
             height: 10,
           ),
-          CustomTextField(
-            hintText: 'Password',
-            onChanged: (value) {
-              setState(() {
-                password = value;
-              });
-            },
-          ),
-          const SizedBox(
-            height: 10,
-          ),
+          if (!widget.isFacebookLogin)
+            CustomTextField(
+              hintText: 'Password',
+              onChanged: (value) {
+                setState(() {
+                  password = value;
+                });
+              },
+            ),
+          if (!widget.isFacebookLogin)
+            const SizedBox(
+              height: 10,
+            ),
           CustomTextField(
             hintText: 'Repassword',
             onChanged: (value) {
@@ -251,11 +260,18 @@ class _WalkerSignupScreenState extends State<WalkerSignupScreen> {
                   timing: timing,
                   userType: 'walker');
               try {
-                await Provider.of<AuthProvider>(context, listen: false)
-                    .register(
-                        userRole: UserRole.walker,
-                        walkerModel: walker,
-                        profileFile: profileFile!);
+                if (!widget.isFacebookLogin) {
+                  await Provider.of<AuthProvider>(context, listen: false)
+                      .register(
+                          userRole: UserRole.walker,
+                          walkerModel: walker,
+                          profileFile: profileFile!);
+                } else {
+                  await Provider.of<AuthProvider>(context, listen: false)
+                      .registerFromFacebook(
+                    walker,
+                  );
+                }
 
                 Get.offAll(() => const WalkerDashboard());
               } catch (e) {
