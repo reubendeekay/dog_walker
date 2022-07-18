@@ -34,7 +34,7 @@ class OwnerModel {
       'user_address': address,
       'user_age': age,
       'user_image': image,
-      'isEnabled': enabled,
+      'isEnable': enabled,
       'user_type': userType,
       'user_password': password,
     };
@@ -50,7 +50,7 @@ class OwnerModel {
       address: json['user_address'] as String,
       age: json['user_age'] as String,
       image: json['user_image'] as String,
-      enabled: json['isEnabled'] as bool,
+      enabled: json['isEnable'] as bool,
       password: json['user_password'] as String,
     );
   }

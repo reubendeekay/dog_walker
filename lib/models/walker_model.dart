@@ -59,7 +59,7 @@ class WalkerModel {
       'timingFrom': from,
       'timingTo': to,
       'availability': isAvailable,
-      'isEnabled': enabled,
+      'isEnable': enabled,
       'rating': ratings
     };
   }
@@ -78,7 +78,7 @@ class WalkerModel {
       long: double.parse(json['lng'].toString()),
       from: json['timingFrom'],
       to: json['timingTo'],
-      enabled: json['isEnabled'],
+      enabled: json['isEnable'],
       ratings: double.parse(json['rating'].toString()),
     );
   }
