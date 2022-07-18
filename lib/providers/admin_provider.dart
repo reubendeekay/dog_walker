@@ -12,7 +12,7 @@ class AdminProvider with ChangeNotifier {
       await FirebaseFirestore.instance
           .collection('DogWalker')
           .doc(userData.docs.first.id)
-          .update({'isEnabled': enable});
+          .update({'isEnable': enable});
     } else {
       final userData = await FirebaseFirestore.instance
           .collection('DogOwner')
@@ -22,7 +22,7 @@ class AdminProvider with ChangeNotifier {
       await FirebaseFirestore.instance
           .collection('DogOwner')
           .doc(userData.docs.first.id)
-          .update({'isEnabled': enable});
+          .update({'isEnable': enable});
     }
 
     print('DONE');

@@ -38,7 +38,7 @@ class AuthProvider with ChangeNotifier {
       OwnerModel? ownerModel,
       WalkerModel? walkerModel,
       AdminModel? adminModel,
-      required File profileFile}) async {
+      File? profileFile}) async {
     try {
       if (UserRole.owner == userRole) {
         final userCredentials = await FirebaseAuth.instance
@@ -49,12 +49,14 @@ class AuthProvider with ChangeNotifier {
         ownerModel.id = userCredentials.user!.uid;
 
 //UPLOAD PROFILE IMAGE TO STORAGE
-        final ref = await FirebaseStorage.instance
-            .ref('profile_images/${userCredentials.user!.uid}')
-            .putFile(profileFile);
-        final url = await ref.ref.getDownloadURL();
+        if (profileFile != null) {
+          final ref = await FirebaseStorage.instance
+              .ref('profile_images/${userCredentials.user!.uid}')
+              .putFile(profileFile);
+          final url = await ref.ref.getDownloadURL();
 
-        ownerModel.image = url;
+          ownerModel.image = url;
+        }
 
         await FirebaseFirestore.instance
             .collection('DogOwner')
@@ -69,12 +71,15 @@ class AuthProvider with ChangeNotifier {
         walkerModel.id = userCredentials.user!.uid;
 
 //UPLOAD PROFILE IMAGE TO STORAGE
-        final ref = await FirebaseStorage.instance
-            .ref('profile_images/${userCredentials.user!.uid}')
-            .putFile(profileFile);
-        final url = await ref.ref.getDownloadURL();
 
-        walkerModel.image = url;
+        if (profileFile != null) {
+          final ref = await FirebaseStorage.instance
+              .ref('profile_images/${userCredentials.user!.uid}')
+              .putFile(profileFile);
+          final url = await ref.ref.getDownloadURL();
+
+          walkerModel.image = url;
+        }
 
         await FirebaseFirestore.instance
             .collection('DogWalker')
@@ -114,6 +119,17 @@ class AuthProvider with ChangeNotifier {
           .get();
 
       final userData = OwnerModel.fromJson(requiredUser.docs.first);
+      if (!userData.enabled!) {
+        Get.snackbar('Error', 'Your account is disabled',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red,
+            icon: const Icon(
+              Icons.error,
+              color: Colors.white,
+            ));
+        await FirebaseAuth.instance.signOut();
+        throw Exception('You are not an owner');
+      }
 
       if (requiredUser.docs.isEmpty) {
         print(userData.userId);
@@ -135,6 +151,17 @@ class AuthProvider with ChangeNotifier {
           .get();
 
       final userData = WalkerModel.fromJson(requiredUser.docs.first);
+      if (!userData.enabled!) {
+        Get.snackbar('Error', 'Your account is disabled',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red,
+            icon: const Icon(
+              Icons.error,
+              color: Colors.white,
+            ));
+        await FirebaseAuth.instance.signOut();
+        throw Exception('You are not an owner');
+      }
       if (requiredUser.docs.isEmpty) {
         Get.snackbar('UNAUTHORIZED', 'You are not registered as a dog walker',
             snackPosition: SnackPosition.BOTTOM,
