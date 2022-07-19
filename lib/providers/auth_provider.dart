@@ -227,6 +227,9 @@ class AuthProvider with ChangeNotifier {
           ownerModel.userType = 'owner';
           ownerModel.age = '0';
           ownerModel.description = 'Logged in from Facebook';
+          ownerModel.enabled = true;
+          ownerModel.address = 'Not specified';
+          ownerModel.password = 'Not specified';
 
           await FirebaseFirestore.instance
               .collection('DogOwner')
@@ -264,8 +267,9 @@ class AuthProvider with ChangeNotifier {
             'user_image': userCredentials.user!.photoURL,
           });
         }
-
-        await getCurrentUser(userRole);
+        if (userRole != UserRole.walker) {
+          await getCurrentUser(userRole);
+        }
 
         notifyListeners();
       } catch (error) {

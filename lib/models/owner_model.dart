@@ -42,16 +42,16 @@ class OwnerModel {
 
   factory OwnerModel.fromJson(dynamic json) {
     return OwnerModel(
-      id: json['user_id'] as String,
-      name: json['user_name'] as String,
-      userId: json['user_id'] as String,
-      description: json['user_description'] as String,
-      email: json['user_email'] as String,
-      address: json['user_address'] as String,
-      age: json['user_age'] as String,
-      image: json['user_image'] as String,
-      enabled: json['isEnable'] as bool,
-      password: json['user_password'] as String,
+      id: json['user_id'],
+      name: json['user_name'],
+      userId: json['user_id'],
+      description: json['user_description'],
+      email: json['user_email'],
+      address: json['user_address'],
+      age: json['user_age'],
+      image: json['user_image'],
+      enabled: json['isEnable'],
+      password: json['user_password'],
     );
   }
 }
