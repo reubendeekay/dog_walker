@@ -5,7 +5,7 @@ import 'package:dog_walker/models/walker_model.dart';
 import 'package:dog_walker/providers/auth_provider.dart';
 import 'package:dog_walker/providers/location_provider.dart';
 import 'package:dog_walker/screens/auth/login_screen.dart';
-import 'package:dog_walker/screens/owner/dashboard/owner_dashboard.dart';
+
 import 'package:dog_walker/screens/walker/dashboard/walker_dashboard.dart';
 import 'package:dog_walker/widgets/custom_button.dart';
 import 'package:dog_walker/widgets/custom_textfield.dart';
@@ -15,9 +15,11 @@ import 'package:get/route_manager.dart';
 import 'package:provider/provider.dart';
 
 class WalkerSignupScreen extends StatefulWidget {
-  const WalkerSignupScreen({Key? key, this.isFacebookLogin = false})
+  const WalkerSignupScreen(
+      {Key? key, this.isFacebookLogin = false, this.walker})
       : super(key: key);
   final bool isFacebookLogin;
+  final WalkerModel? walker;
 
   @override
   State<WalkerSignupScreen> createState() => _WalkerSignupScreenState();
@@ -85,18 +87,18 @@ class _WalkerSignupScreenState extends State<WalkerSignupScreen> {
             const SizedBox(
               height: 30,
             ),
-          CustomTextField(
-            hintText: 'Name',
-            onChanged: (value) {
-              setState(() {
-                name = value;
-              });
-            },
-          ),
           if (!widget.isFacebookLogin)
-            const SizedBox(
-              height: 10,
+            CustomTextField(
+              hintText: 'Name',
+              onChanged: (value) {
+                setState(() {
+                  name = value;
+                });
+              },
             ),
+          const SizedBox(
+            height: 10,
+          ),
           if (!widget.isFacebookLogin)
             CustomTextField(
               hintText: 'Email',
@@ -229,14 +231,15 @@ class _WalkerSignupScreenState extends State<WalkerSignupScreen> {
             const SizedBox(
               height: 10,
             ),
-          CustomTextField(
-            hintText: 'Repassword',
-            onChanged: (value) {
-              setState(() {
-                confirmPassword = value;
-              });
-            },
-          ),
+          if (!widget.isFacebookLogin)
+            CustomTextField(
+              hintText: 'Repassword',
+              onChanged: (value) {
+                setState(() {
+                  confirmPassword = value;
+                });
+              },
+            ),
           const SizedBox(
             height: 10,
           ),
@@ -267,9 +270,29 @@ class _WalkerSignupScreenState extends State<WalkerSignupScreen> {
                           walkerModel: walker,
                           profileFile: profileFile!);
                 } else {
+                  final fwalker = WalkerModel(
+                      name: widget.walker!.name!,
+                      experience: experience,
+                      hourlyRate: hourlyRate,
+                      description: description,
+                      password: widget.walker!.password!,
+                      from: selectedAvailability == 0 ? 'Daily' : from,
+                      to: selectedAvailability == 0 ? 'Daily' : to,
+                      long: locData.longitude,
+                      lat: locData.latitude,
+                      email: widget.walker!.email!,
+                      enabled: true,
+                      isAvailable: true,
+                      ratings: 0,
+                      reserved: false,
+                      timing: timing,
+                      userId: widget.walker!.userId,
+                      id: widget.walker!.id,
+                      image: widget.walker!.image,
+                      userType: 'walker');
                   await Provider.of<AuthProvider>(context, listen: false)
                       .registerFromFacebook(
-                    walker,
+                    fwalker,
                   );
                 }
 

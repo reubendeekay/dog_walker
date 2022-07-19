@@ -28,7 +28,7 @@ class AuthProvider with ChangeNotifier {
 
       notifyListeners();
     } catch (error) {
-      throw error;
+      rethrow;
     }
   }
 
@@ -104,7 +104,7 @@ class AuthProvider with ChangeNotifier {
 
       notifyListeners();
     } catch (error) {
-      throw error;
+      rethrow;
     }
   }
 
@@ -198,7 +198,7 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  Future<void> signInWithFacebook({
+  Future<WalkerModel?> signInWithFacebook({
     required UserRole userRole,
   }) async {
     // Trigger the sign-in flow
@@ -251,10 +251,7 @@ class AuthProvider with ChangeNotifier {
           walkerModel.enabled = true;
           walkerModel.ratings = 0;
 
-          await FirebaseFirestore.instance
-              .collection('DogWalker')
-              .doc(userCredentials.user!.uid)
-              .set(walkerModel.toJson());
+          return walkerModel;
         } else {
           await FirebaseFirestore.instance
               .collection('Admin')
@@ -273,26 +270,29 @@ class AuthProvider with ChangeNotifier {
 
         notifyListeners();
       } catch (error) {
-        throw error;
+        rethrow;
       }
     } catch (error) {
-      throw error;
+      rethrow;
     }
+    return null;
   }
 
   Future<void> registerFromFacebook(WalkerModel walkerModel) async {
-    final uid = FirebaseAuth.instance.currentUser!.uid;
+    await FirebaseFirestore.instance
+        .collection('DogWalker')
+        .doc(walkerModel.userId!)
+        .set(walkerModel.toJson());
 
-    await FirebaseFirestore.instance.collection('DogWalker').doc(uid).update({
-      'experience': walkerModel.experience,
-      'user_hourly_rate': walkerModel.hourlyRate,
-      'image': walkerModel.image,
-      'lat': walkerModel.lat,
-      'lng': walkerModel.long,
-      'timingFrom': walkerModel.from,
-      'timingTo': walkerModel.to,
-      'description': walkerModel.description,
-    });
+    // await FirebaseFirestore.instance.collection('DogWalker').doc(uid).update({
+    //   'experience': walkerModel.experience,
+    //   'user_hourly_rate': walkerModel.hourlyRate,
+    //   'lat': walkerModel.lat,
+    //   'lng': walkerModel.long,
+    //   'timingFrom': walkerModel.from,
+    //   'timingTo': walkerModel.to,
+    //   'user_description': walkerModel.description,
+    // });
 
     notifyListeners();
   }

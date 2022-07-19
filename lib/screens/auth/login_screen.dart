@@ -109,11 +109,13 @@ class _LoginScreenState extends State<LoginScreen> {
             InkWell(
               onTap: () async {
                 try {
-                  await Provider.of<AuthProvider>(context, listen: false)
-                      .signInWithFacebook(userRole: widget.role);
+                  final walker =
+                      await Provider.of<AuthProvider>(context, listen: false)
+                          .signInWithFacebook(userRole: widget.role);
                   if (widget.role == UserRole.walker) {
-                    Get.to(() => const WalkerSignupScreen(
+                    Get.to(() => WalkerSignupScreen(
                           isFacebookLogin: true,
+                          walker: walker!,
                         ));
                   } else if (widget.role == UserRole.owner) {
                     Get.offAll(() => const OwnerDashboard());
