@@ -10,6 +10,7 @@ import 'package:dog_walker/screens/walker/dashboard/walker_dashboard.dart';
 import 'package:dog_walker/widgets/custom_button.dart';
 import 'package:dog_walker/widgets/custom_textfield.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
 import 'package:provider/provider.dart';
@@ -298,7 +299,9 @@ class _WalkerSignupScreenState extends State<WalkerSignupScreen> {
 
                 Get.offAll(() => const WalkerDashboard());
               } catch (e) {
-                print(e);
+                if (kDebugMode) {
+                  print(e);
+                }
               }
             },
             text: 'REGISTER',

@@ -205,76 +205,70 @@ class AuthProvider with ChangeNotifier {
     final LoginResult loginResult = await FacebookAuth.instance.login();
 
     // Create a credential from the access token
-    try {
-      final OAuthCredential facebookAuthCredential =
-          FacebookAuthProvider.credential(loginResult.accessToken!.token);
 
-      // Once signed in, return the UserCredential
-      final userCredentials = await FirebaseAuth.instance
-          .signInWithCredential(facebookAuthCredential);
+    final OAuthCredential facebookAuthCredential =
+        FacebookAuthProvider.credential(loginResult.accessToken!.token);
 
-      try {
-        if (UserRole.owner == userRole) {
-          final ownerModel = OwnerModel();
+    // Once signed in, return the UserCredential
+    final userCredentials = await FirebaseAuth.instance
+        .signInWithCredential(facebookAuthCredential);
 
-          ownerModel.userId = userCredentials.user!.uid;
-          ownerModel.id = userCredentials.user!.uid;
+    if (UserRole.owner == userRole) {
+      final ownerModel = OwnerModel();
 
-          ownerModel.image = userCredentials.user!.photoURL;
-          ownerModel.name = userCredentials.user!.displayName;
-          ownerModel.email = userCredentials.user!.email;
-          ownerModel.userId = userCredentials.user!.uid;
-          ownerModel.userType = 'owner';
-          ownerModel.age = '0';
-          ownerModel.description = 'Logged in from Facebook';
-          ownerModel.enabled = true;
-          ownerModel.address = 'Not specified';
-          ownerModel.password = 'Not specified';
+      ownerModel.userId = userCredentials.user!.uid;
+      ownerModel.id = userCredentials.user!.uid;
 
-          await FirebaseFirestore.instance
-              .collection('DogOwner')
-              .doc(userCredentials.user!.uid)
-              .set(ownerModel.toJson());
-        } else if (UserRole.walker == userRole) {
-          final walkerModel = WalkerModel();
+      ownerModel.image = userCredentials.user!.photoURL;
+      ownerModel.name = userCredentials.user!.displayName;
+      ownerModel.email = userCredentials.user!.email;
+      ownerModel.userId = userCredentials.user!.uid;
+      ownerModel.userType = 'owner';
+      ownerModel.age = '0';
+      ownerModel.description = 'Logged in from Facebook';
+      ownerModel.enabled = true;
+      ownerModel.address = 'Not specified';
+      ownerModel.password = 'Not specified';
 
-          walkerModel.userId = userCredentials.user!.uid;
-          walkerModel.id = userCredentials.user!.uid;
+      await FirebaseFirestore.instance
+          .collection('DogOwner')
+          .doc(userCredentials.user!.uid)
+          .set(ownerModel.toJson());
+    } else if (UserRole.walker == userRole) {
+      final walkerModel = WalkerModel();
 
-          walkerModel.image = userCredentials.user!.photoURL;
-          walkerModel.name = userCredentials.user!.displayName;
-          walkerModel.email = userCredentials.user!.email;
-          walkerModel.userId = userCredentials.user!.uid;
-          walkerModel.userType = 'walker';
-          walkerModel.enabled = true;
-          walkerModel.isAvailable = true;
-          walkerModel.enabled = true;
-          walkerModel.ratings = 0;
+      walkerModel.userId = userCredentials.user!.uid;
+      walkerModel.id = userCredentials.user!.uid;
 
-          return walkerModel;
-        } else {
-          await FirebaseFirestore.instance
-              .collection('Admin')
-              .doc(userCredentials.user!.uid)
-              .set({
-            'user_id': userCredentials.user!.uid,
-            'user_type': 'admin',
-            'user_name': userCredentials.user!.displayName,
-            'user_email': userCredentials.user!.email,
-            'user_image': userCredentials.user!.photoURL,
-          });
-        }
-        if (userRole != UserRole.walker) {
-          await getCurrentUser(userRole);
-        }
+      walkerModel.image = userCredentials.user!.photoURL;
+      walkerModel.name = userCredentials.user!.displayName;
+      walkerModel.email = userCredentials.user!.email;
+      walkerModel.userId = userCredentials.user!.uid;
+      walkerModel.userType = 'walker';
+      walkerModel.enabled = true;
+      walkerModel.isAvailable = true;
+      walkerModel.enabled = true;
+      walkerModel.ratings = 0;
 
-        notifyListeners();
-      } catch (error) {
-        rethrow;
-      }
-    } catch (error) {
-      rethrow;
+      return walkerModel;
+    } else {
+      await FirebaseFirestore.instance
+          .collection('Admin')
+          .doc(userCredentials.user!.uid)
+          .set({
+        'user_id': userCredentials.user!.uid,
+        'user_type': 'admin',
+        'user_name': userCredentials.user!.displayName,
+        'user_email': userCredentials.user!.email,
+        'user_image': userCredentials.user!.photoURL,
+      });
     }
+    if (userRole != UserRole.walker) {
+      await getCurrentUser(userRole);
+    }
+
+    notifyListeners();
+
     return null;
   }
 
