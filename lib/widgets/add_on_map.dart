@@ -29,56 +29,59 @@ class _AddOnMapState extends State<AddOnMap> {
           onTap: (value) {
             showDialog(
                 context: context,
-                builder: (ctx) => AlertDialog(
-                      title: const Text('Confirm the location'),
-                      content: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Address',
-                            style: TextStyle(color: Colors.grey, fontSize: 12),
+                builder: (ctx) => SingleChildScrollView(
+                      child: AlertDialog(
+                        title: const Text('Confirm the location'),
+                        content: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Address',
+                              style:
+                                  TextStyle(color: Colors.grey, fontSize: 12),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            FutureBuilder<UserLocation>(
+                                future: Provider.of<LocationProvider>(context,
+                                        listen: false)
+                                    .getLocationDetails(value),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return const Center(
+                                        child: CircularProgressIndicator());
+                                  }
+                                  return Text(
+                                    '${snapshot.data!.address!}, ${snapshot.data!.state!}, ${snapshot.data!.country!}',
+                                  );
+                                })
+                          ],
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              widget.onChanged!(value);
+                              Navigator.of(context).pop();
+                              Navigator.of(context).pop();
+                            },
+                            child: Container(
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 20),
+                                child: const Text('Yes')),
                           ),
-                          const SizedBox(
-                            height: 10,
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Container(
+                                margin: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 20),
+                                child: const Text('No')),
                           ),
-                          FutureBuilder<UserLocation>(
-                              future: Provider.of<LocationProvider>(context,
-                                      listen: false)
-                                  .getLocationDetails(value),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return const Center(
-                                      child: CircularProgressIndicator());
-                                }
-                                return Text(
-                                  '  ${snapshot.data!.address!}, ${snapshot.data!.city!}, ${snapshot.data!.country!}',
-                                );
-                              })
                         ],
                       ),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            widget.onChanged!(value);
-                            Navigator.of(context).pop();
-                            Navigator.of(context).pop();
-                          },
-                          child: Container(
-                              margin:
-                                  const EdgeInsets.symmetric(horizontal: 20),
-                              child: const Text('Yes')),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: Container(
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 20),
-                              child: const Text('No')),
-                        ),
-                      ],
                     ));
           },
           compassEnabled: true,
