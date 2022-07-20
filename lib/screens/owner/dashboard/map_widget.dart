@@ -1,7 +1,9 @@
 import 'package:dog_walker/models/walker_model.dart';
 import 'package:dog_walker/providers/location_provider.dart';
 import 'package:dog_walker/providers/owner_provider.dart';
+import 'package:dog_walker/screens/owner/dashboard/walker_details_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/route_manager.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -28,6 +30,11 @@ class _MapWidgetState extends State<MapWidget> {
         Marker(
           markerId: MarkerId(
             walker.userId!,
+          ),
+          infoWindow: InfoWindow(
+            title: walker.name,
+            onTap: () => Get.to(() => WalkerDetailsScreen(walker: walker)),
+            snippet: walker.hourlyRate.toString(),
           ),
           position: LatLng(walker.lat!, walker.long!),
         ),

@@ -7,12 +7,14 @@ import 'package:dog_walker/providers/location_provider.dart';
 import 'package:dog_walker/screens/auth/login_screen.dart';
 
 import 'package:dog_walker/screens/walker/dashboard/walker_dashboard.dart';
+import 'package:dog_walker/widgets/add_on_map.dart';
 import 'package:dog_walker/widgets/custom_button.dart';
 import 'package:dog_walker/widgets/custom_textfield.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 
 class WalkerSignupScreen extends StatefulWidget {
@@ -40,6 +42,7 @@ class _WalkerSignupScreenState extends State<WalkerSignupScreen> {
       timing;
   int selectedAvailability = 0;
   File? profileFile;
+  LatLng? walkerLocation;
 
   @override
   Widget build(BuildContext context) {
@@ -219,6 +222,32 @@ class _WalkerSignupScreenState extends State<WalkerSignupScreen> {
           const SizedBox(
             height: 10,
           ),
+          Row(
+            children: [
+              const Text(
+                'Walker Location',
+                style: TextStyle(fontSize: 16),
+              ),
+              const Spacer(),
+              IconButton(
+                  onPressed: () {
+                    Get.to(AddOnMap(
+                      onChanged: (location) {
+                        setState(() {
+                          walkerLocation = location;
+                        });
+                      },
+                    ));
+                  },
+                  icon: const Icon(
+                    Icons.location_history,
+                    size: 30,
+                  ))
+            ],
+          ),
+          const SizedBox(
+            height: 10,
+          ),
           if (!widget.isFacebookLogin)
             CustomTextField(
               hintText: 'Password',
@@ -245,65 +274,85 @@ class _WalkerSignupScreenState extends State<WalkerSignupScreen> {
             height: 10,
           ),
           CustomButton(
-            onPressed: () async {
-              final walker = WalkerModel(
-                  name: name,
-                  experience: experience,
-                  hourlyRate: hourlyRate,
-                  description: description,
-                  password: password,
-                  from: selectedAvailability == 0 ? 'Daily' : from,
-                  to: selectedAvailability == 0 ? 'Daily' : to,
-                  long: locData.longitude,
-                  lat: locData.latitude,
-                  email: email,
-                  enabled: true,
-                  isAvailable: true,
-                  ratings: 0,
-                  reserved: false,
-                  timing: timing,
-                  userType: 'walker');
-              try {
-                if (!widget.isFacebookLogin) {
-                  await Provider.of<AuthProvider>(context, listen: false)
-                      .register(
-                          userRole: UserRole.walker,
-                          walkerModel: walker,
-                          profileFile: profileFile!);
-                } else {
-                  final fwalker = WalkerModel(
-                      name: widget.walker!.name!,
-                      experience: experience,
-                      hourlyRate: hourlyRate,
-                      description: description,
-                      password: widget.walker!.password!,
-                      from: selectedAvailability == 0 ? 'Daily' : from,
-                      to: selectedAvailability == 0 ? 'Daily' : to,
-                      long: locData.longitude,
-                      lat: locData.latitude,
-                      email: widget.walker!.email!,
-                      enabled: true,
-                      isAvailable: true,
-                      ratings: 0,
-                      reserved: false,
-                      timing: timing,
-                      userId: widget.walker!.userId,
-                      id: widget.walker!.id,
-                      image: widget.walker!.image,
-                      userType: 'walker');
-                  await Provider.of<AuthProvider>(context, listen: false)
-                      .registerFromFacebook(
-                    fwalker,
-                  );
-                }
+            onPressed: walkerLocation == null ||
+                    experience == null ||
+                    (!widget.isFacebookLogin && profileFile == null)
+                ? () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('Error'),
+                        content: const Text('Please fill all the fields'),
+                        actions: [
+                          FlatButton(
+                            child: const Text('OK'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                : () async {
+                    final walker = WalkerModel(
+                        name: name,
+                        experience: experience,
+                        hourlyRate: hourlyRate,
+                        description: description,
+                        password: password,
+                        from: selectedAvailability == 0 ? 'Daily' : from,
+                        to: selectedAvailability == 0 ? 'Daily' : to,
+                        long: walkerLocation!.longitude,
+                        lat: walkerLocation!.latitude,
+                        email: email,
+                        enabled: true,
+                        isAvailable: true,
+                        ratings: 0,
+                        reserved: false,
+                        timing: timing,
+                        userType: 'walker');
+                    try {
+                      if (!widget.isFacebookLogin) {
+                        await Provider.of<AuthProvider>(context, listen: false)
+                            .register(
+                                userRole: UserRole.walker,
+                                walkerModel: walker,
+                                profileFile: profileFile!);
+                      } else {
+                        final fwalker = WalkerModel(
+                            name: widget.walker!.name!,
+                            experience: experience,
+                            hourlyRate: hourlyRate,
+                            description: description,
+                            password: widget.walker!.password!,
+                            from: selectedAvailability == 0 ? 'Daily' : from,
+                            to: selectedAvailability == 0 ? 'Daily' : to,
+                            long: walkerLocation!.longitude,
+                            lat: walkerLocation!.latitude,
+                            email: widget.walker!.email!,
+                            enabled: true,
+                            isAvailable: true,
+                            ratings: 0,
+                            reserved: false,
+                            timing: timing,
+                            userId: widget.walker!.userId,
+                            id: widget.walker!.id,
+                            image: widget.walker!.image,
+                            userType: 'walker');
+                        await Provider.of<AuthProvider>(context, listen: false)
+                            .registerFromFacebook(
+                          fwalker,
+                        );
+                      }
 
-                Get.offAll(() => const WalkerDashboard());
-              } catch (e) {
-                if (kDebugMode) {
-                  print(e);
-                }
-              }
-            },
+                      Get.offAll(() => const WalkerDashboard());
+                    } catch (e) {
+                      if (kDebugMode) {
+                        print(e);
+                      }
+                    }
+                  },
             text: 'REGISTER',
             textColor: Colors.white,
             margin: 0,
