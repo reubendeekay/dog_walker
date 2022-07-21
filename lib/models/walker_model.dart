@@ -51,7 +51,7 @@ class WalkerModel {
       'user_hourly_rate': hourlyRate,
       'user_image': image,
       'password': password,
-      'reserved': reserved,
+      'isReserved': reserved,
       'timing': timing,
       'type': userType,
       'lat': lat,
@@ -80,6 +80,8 @@ class WalkerModel {
       to: json['timingTo'],
       enabled: json['isEnable'],
       ratings: double.parse(json['rating'].toString()),
+      reserved: json['isReserved'],
+      timing: json['timing'],
     );
   }
 }
