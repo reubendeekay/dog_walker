@@ -15,6 +15,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class WalkerSignupScreen extends StatefulWidget {
@@ -37,6 +38,7 @@ class _WalkerSignupScreenState extends State<WalkerSignupScreen> {
       password,
       confirmPassword,
       from,
+      address,
       email,
       to,
       timing;
@@ -172,26 +174,54 @@ class _WalkerSignupScreenState extends State<WalkerSignupScreen> {
             Row(
               children: [
                 Expanded(
-                  child: CustomTextField(
-                    hintText: 'From',
-                    onChanged: (value) {
+                  child: GestureDetector(
+                    onTap: () async {
+                      final selectedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime.now(),
+                        lastDate: DateTime(2050),
+                      );
                       setState(() {
-                        from = value;
+                        from = DateFormat('dd-MM-yyyy').format(selectedDate!);
                       });
                     },
+                    child: CustomTextField(
+                      isEnabled: false,
+                      hintText: from ?? 'From',
+                      onChanged: (value) {
+                        setState(() {
+                          from = value;
+                        });
+                      },
+                    ),
                   ),
                 ),
                 const SizedBox(
                   width: 10,
                 ),
                 Expanded(
-                  child: CustomTextField(
-                    hintText: 'To',
-                    onChanged: (value) {
+                  child: GestureDetector(
+                    onTap: () async {
+                      final selectedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime.now(),
+                        lastDate: DateTime(2050),
+                      );
                       setState(() {
-                        to = value;
+                        to = DateFormat('dd-MM-yyyy').format(selectedDate!);
                       });
                     },
+                    child: CustomTextField(
+                      hintText: to ?? 'To',
+                      isEnabled: false,
+                      onChanged: (value) {
+                        setState(() {
+                          to = value;
+                        });
+                      },
+                    ),
                   ),
                 ),
               ],
@@ -199,13 +229,25 @@ class _WalkerSignupScreenState extends State<WalkerSignupScreen> {
           const SizedBox(
             height: 10,
           ),
-          CustomTextField(
-            hintText: 'Timing',
-            onChanged: (value) {
+          GestureDetector(
+            onTap: () async {
+              final selectedTime = await showTimePicker(
+                context: context,
+                initialTime: TimeOfDay.now(),
+              );
               setState(() {
-                timing = value;
+                timing = '8:00 AM to ${selectedTime!.format(context)}';
               });
             },
+            child: CustomTextField(
+              hintText: timing ?? 'Timing',
+              isEnabled: false,
+              onChanged: (value) {
+                setState(() {
+                  timing = value;
+                });
+              },
+            ),
           ),
           const SizedBox(
             height: 10,
@@ -224,9 +266,9 @@ class _WalkerSignupScreenState extends State<WalkerSignupScreen> {
           ),
           Row(
             children: [
-              const Text(
-                'Walker Location',
-                style: TextStyle(fontSize: 16),
+              Text(
+                address ?? 'Location',
+                style: const TextStyle(fontSize: 16),
               ),
               const Spacer(),
               IconButton(
@@ -235,6 +277,11 @@ class _WalkerSignupScreenState extends State<WalkerSignupScreen> {
                       onChanged: (location) {
                         setState(() {
                           walkerLocation = location;
+                        });
+                      },
+                      addressChanged: (val) {
+                        setState(() {
+                          address = val.address;
                         });
                       },
                     ));

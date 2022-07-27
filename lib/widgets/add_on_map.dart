@@ -6,8 +6,10 @@ import 'package:provider/provider.dart';
 class AddOnMap extends StatefulWidget {
   static const routeName = '/add-on-map';
 
-  const AddOnMap({Key? key, this.onChanged}) : super(key: key);
+  const AddOnMap({Key? key, this.onChanged, this.addressChanged})
+      : super(key: key);
   final Function(LatLng loc)? onChanged;
+  final Function(UserLocation add)? addressChanged;
   @override
   _AddOnMapState createState() => _AddOnMapState();
 }
@@ -22,7 +24,7 @@ class _AddOnMapState extends State<AddOnMap> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Select Location'),
+        title: const Text('Select Location'),
       ),
       body: SafeArea(
         child: GoogleMap(
@@ -53,6 +55,13 @@ class _AddOnMapState extends State<AddOnMap> {
                                     return const Center(
                                         child: CircularProgressIndicator());
                                   }
+                                  WidgetsBinding.instance
+                                      .addPostFrameCallback((timeStamp) {
+                                    setState(() {
+                                      widget.addressChanged!(snapshot.data!);
+                                    });
+                                  });
+
                                   return Text(
                                     '${snapshot.data!.address!}, ${snapshot.data!.state!}, ${snapshot.data!.country!}',
                                   );
@@ -62,7 +71,9 @@ class _AddOnMapState extends State<AddOnMap> {
                         actions: [
                           TextButton(
                             onPressed: () {
-                              widget.onChanged!(value);
+                              if (widget.onChanged != null) {
+                                widget.onChanged!(value);
+                              } else if (widget.addressChanged != null) {}
                               Navigator.of(context).pop();
                               Navigator.of(context).pop();
                             },

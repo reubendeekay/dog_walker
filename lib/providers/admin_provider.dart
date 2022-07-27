@@ -25,7 +25,6 @@ class AdminProvider with ChangeNotifier {
           .update({'isEnable': enable});
     }
 
-    print('DONE');
     notifyListeners();
   }
 

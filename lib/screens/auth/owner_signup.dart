@@ -5,6 +5,7 @@ import 'package:dog_walker/models/owner_model.dart';
 import 'package:dog_walker/providers/auth_provider.dart';
 import 'package:dog_walker/screens/auth/login_screen.dart';
 import 'package:dog_walker/screens/owner/dashboard/owner_dashboard.dart';
+import 'package:dog_walker/widgets/add_on_map.dart';
 import 'package:dog_walker/widgets/custom_button.dart';
 import 'package:dog_walker/widgets/custom_textfield.dart';
 import 'package:file_picker/file_picker.dart';
@@ -101,13 +102,33 @@ class _OwnerSignupState extends State<OwnerSignup> {
           const SizedBox(
             height: 10,
           ),
-          CustomTextField(
-            hintText: 'Address',
-            onChanged: (value) {
-              setState(() {
-                address = value;
-              });
-            },
+          Row(
+            children: [
+              const Text('Pick your Address'),
+              const SizedBox(
+                width: 10,
+              ),
+              if (address != null)
+                Text(
+                  address!,
+                  style: TextStyle(color: kPrimaryColor),
+                ),
+              const Spacer(),
+              IconButton(
+                icon: const Icon(Icons.location_history),
+                onPressed: () {
+                  Get.to(
+                    () => AddOnMap(
+                      addressChanged: (loc) {
+                        setState(() {
+                          address = loc.address;
+                        });
+                      },
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
           const SizedBox(
             height: 10,

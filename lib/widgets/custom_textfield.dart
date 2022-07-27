@@ -7,6 +7,7 @@ class CustomTextField extends StatelessWidget {
       required this.hintText,
       required this.onChanged,
       this.obscureText = false,
+      this.isEnabled = true,
       this.controller,
       this.validator,
       this.isInfinite = false,
@@ -15,6 +16,7 @@ class CustomTextField extends StatelessWidget {
       : super(key: key);
 
   final String hintText;
+  final bool isEnabled;
   final TextEditingController? controller;
   final TextInputType? keyboardType;
   final bool obscureText;
@@ -29,6 +31,7 @@ class CustomTextField extends StatelessWidget {
       borderRadius: BorderRadius.circular(10),
       child: TextFormField(
         controller: controller,
+        enabled: isEnabled,
         keyboardType: keyboardType,
         obscureText: obscureText,
         maxLength: null,

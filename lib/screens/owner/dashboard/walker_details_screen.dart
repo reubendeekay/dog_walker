@@ -93,7 +93,9 @@ class _WalkerDetailsScreenState extends State<WalkerDetailsScreen> {
                             : '${widget.walker.from} to ${widget.walker.to}',
                       ),
                       Text(
-                        widget.walker.timing!,
+                        widget.walker.timing == null
+                            ? '8:00 AM - 5:00 PM'
+                            : widget.walker.timing!,
                       ),
                     ],
                   ),
