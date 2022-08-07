@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dog_walker/models/order_model.dart';
 import 'package:dog_walker/providers/auth_provider.dart';
+import 'package:dog_walker/providers/owner_provider.dart';
 import 'package:dog_walker/screens/owner/notifications/widgets/owner_notification_tile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,20 @@ class OwnerNotificationsScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Notifications'),
         automaticallyImplyLeading: false,
+        actions: [
+          TextButton(
+              onPressed: () async {
+                await Provider.of<OwnerProvider>(context, listen: false)
+                    .deleteAllNotifications();
+              },
+              child: const Text(
+                'Clear All',
+                style: TextStyle(color: Colors.white),
+              )),
+          const SizedBox(
+            width: 15,
+          )
+        ],
       ),
       body: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance

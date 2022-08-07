@@ -36,13 +36,16 @@ dependencies:
   firebase_storage: ^10.3.1
   flutter:
     sdk: flutter
+  flutter_dotenv: ^5.0.2
   flutter_facebook_auth: ^4.4.0+1
   flutter_rating_bar: ^4.0.1
+  flutter_stripe: ^4.0.0
   font_awesome_flutter: ^10.1.0
   geocoder2: ^1.1.2
   get: ^4.6.5
   google_fonts: ^3.0.1
   google_maps_flutter: ^2.1.8
+  http: ^0.13.4
   intl: ^0.17.0
   location: ^4.4.0
   mobile_scanner: ^1.1.1
@@ -66,6 +69,7 @@ flutter:
   assets:
     - assets/
     - assets/images/
+    - .env
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
   # For details regarding adding assets from package dependencies, see

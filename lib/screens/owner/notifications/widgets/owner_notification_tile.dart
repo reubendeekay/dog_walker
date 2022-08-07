@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dog_walker/models/order_model.dart';
 import 'package:dog_walker/screens/owner/payment/payment_screen.dart';
 import 'package:dog_walker/widgets/custom_button.dart';
@@ -10,73 +11,90 @@ class OwnerNotificationTile extends StatelessWidget {
   final OrderModel order;
   @override
   Widget build(BuildContext context) {
-    return Container(
-        margin: const EdgeInsets.only(bottom: 15),
-        padding: const EdgeInsets.all(15),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15), color: Colors.white),
-        child: Column(
-          children: [
-            Row(
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Container(
+            margin: const EdgeInsets.only(bottom: 15),
+            padding: const EdgeInsets.all(15),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15), color: Colors.white),
+            child: Column(
               children: [
-                Text(
-                  order.owner!.name!,
-                  style: const TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16),
+                Row(
+                  children: [
+                    Text(
+                      order.owner!.name!,
+                      style: const TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16),
+                    ),
+                    const Spacer(),
+                    Text(
+                      '${order.totalTime}hrs',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
                 ),
-                const Spacer(),
+                const SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  children: [
+                    Text(
+                      '${order.owner!.age} yrs EXP',
+                      style: const TextStyle(
+                        color: Colors.black,
+                      ),
+                    ),
+                    Expanded(
+                        child: CustomButton(
+                      onPressed: () {
+                        Get.to(() => PaymentScreen(
+                              order: order,
+                            ));
+                      },
+                      radius: 2,
+                      text: 'PAY',
+                      textColor: Colors.white,
+                      margin: 30,
+                      height: 40,
+                    )),
+                    Text(
+                      '\$${order.totalCost}',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
                 Text(
-                  '${order.totalTime}hrs',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Colors.black,
-                  ),
+                  'Arrive at ${order.time} on ${order.orderDate}',
+                  style: const TextStyle(color: Colors.black, fontSize: 12),
                 ),
               ],
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Row(
-              children: [
-                Text(
-                  '${order.owner!.age} yrs EXP',
-                  style: const TextStyle(
-                    color: Colors.black,
-                  ),
-                ),
-                Expanded(
-                    child: CustomButton(
-                  onPressed: () {
-                    Get.to(() => PaymentScreen(
-                          order: order,
-                        ));
-                  },
-                  radius: 2,
-                  text: 'PAY',
-                  textColor: Colors.white,
-                  margin: 30,
-                  height: 40,
-                )),
-                Text(
-                  '\$${order.totalCost}',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Colors.black,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Text(
-              'Arrive at ${order.time} on ${order.orderDate}',
-              style: const TextStyle(color: Colors.black, fontSize: 12),
-            ),
-          ],
-        ));
+            )),
+        Positioned(
+          top: -7.5,
+          right: -7.5,
+          child: InkWell(
+              onTap: () async {
+                await FirebaseFirestore.instance
+                    .collection('orders')
+                    .doc(order.orderId)
+                    .delete();
+              },
+              child: const Icon(Icons.cancel, color: Colors.red, size: 30)),
+        )
+      ],
+    );
   }
 }

@@ -2,6 +2,7 @@ import 'package:dog_walker/models/order_model.dart';
 import 'package:dog_walker/models/walker_model.dart';
 import 'package:dog_walker/providers/owner_provider.dart';
 import 'package:dog_walker/screens/owner/dashboard/widgets/hour_stepper.dart';
+import 'package:dog_walker/screens/owner/features/feedback_screen.dart';
 import 'package:dog_walker/widgets/custom_button.dart';
 import 'package:dog_walker/widgets/success_dialog_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -201,6 +202,20 @@ class _WalkerDetailsScreenState extends State<WalkerDetailsScreen> {
                 height: 30,
               ),
               CustomButton(
+                  onPressed: () {
+                    final order = OrderModel(
+                      walkerId: widget.walker.id,
+                      userId: FirebaseAuth.instance.currentUser!.uid,
+                    );
+                    Get.to(() => FeedbackScreen(
+                          order: order,
+                        ));
+                  },
+                  text: 'Rate walker'),
+              const SizedBox(
+                height: 15,
+              ),
+              CustomButton(
                 onPressed: selectedDate == null || selectedTime == null
                     ? null
                     : () async {
@@ -231,7 +246,6 @@ class _WalkerDetailsScreenState extends State<WalkerDetailsScreen> {
                       },
                 text: 'PROCEED',
                 textColor: Colors.white,
-                margin: 60,
               )
             ],
           ),

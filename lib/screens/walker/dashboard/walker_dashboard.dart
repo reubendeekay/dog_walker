@@ -2,6 +2,7 @@ import 'package:dog_walker/models/order_model.dart';
 import 'package:dog_walker/providers/auth_provider.dart';
 import 'package:dog_walker/providers/walker_provider.dart';
 import 'package:dog_walker/screens/auth/splash_screen.dart';
+import 'package:dog_walker/screens/walker/dashboard/ratings_screen.dart';
 import 'package:dog_walker/screens/walker/dashboard/requests_screen.dart';
 import 'package:dog_walker/screens/walker/dashboard/widgets/owner_request_card.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,6 +20,12 @@ class WalkerDashboard extends StatelessWidget {
         appBar: AppBar(
           automaticallyImplyLeading: false,
           actions: [
+            IconButton(
+              icon: const Icon(Icons.star_border_outlined),
+              onPressed: () {
+                Get.to(() => const WalkerRatingsScreen());
+              },
+            ),
             IconButton(
               icon: const Icon(Icons.people),
               onPressed: () {

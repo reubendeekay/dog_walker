@@ -103,61 +103,65 @@ class _LoginScreenState extends State<LoginScreen> {
                 margin: 0,
               ),
             ),
-            const SizedBox(
-              width: 15,
-            ),
-            InkWell(
-              onTap: () async {
-                try {
-                  final walker =
-                      await Provider.of<AuthProvider>(context, listen: false)
-                          .signInWithFacebook(userRole: widget.role);
-                  if (widget.role == UserRole.walker) {
-                    Get.to(() => WalkerSignupScreen(
-                          isFacebookLogin: true,
-                          walker: walker!,
-                        ));
-                  } else if (widget.role == UserRole.owner) {
-                    Get.offAll(() => const OwnerDashboard());
-                  }
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text(e.toString()),
-                  ));
-                }
-              },
-              child: Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                    color: Colors.blue[900], shape: BoxShape.circle),
-                child: const Icon(
-                  FontAwesomeIcons.facebookF,
-                ),
+            if (widget.role != UserRole.admin)
+              const SizedBox(
+                width: 15,
               ),
-            )
+            if (widget.role != UserRole.admin)
+              InkWell(
+                onTap: () async {
+                  try {
+                    final walker =
+                        await Provider.of<AuthProvider>(context, listen: false)
+                            .signInWithFacebook(userRole: widget.role);
+                    if (widget.role == UserRole.walker) {
+                      Get.to(() => WalkerSignupScreen(
+                            isFacebookLogin: true,
+                            walker: walker!,
+                          ));
+                    } else if (widget.role == UserRole.owner) {
+                      Get.offAll(() => const OwnerDashboard());
+                    }
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(e.toString()),
+                    ));
+                  }
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                      color: Colors.blue[900], shape: BoxShape.circle),
+                  child: const Icon(
+                    FontAwesomeIcons.facebookF,
+                  ),
+                ),
+              )
           ],
         ),
         const SizedBox(height: 40),
-        Center(
-          child: GestureDetector(
-            child: RichText(
-                text: TextSpan(text: 'I don\'t have an account? ', children: [
-              TextSpan(
-                  text: 'Create an account',
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () {
-                      if (widget.role == UserRole.owner) {
-                        Get.to(() => const OwnerSignup());
-                      } else if (widget.role == UserRole.walker) {
-                        Get.to(() => const WalkerSignupScreen());
-                      } else {
-                        Get.to(() => const AdminSignup());
-                      }
-                    },
-                  style: const TextStyle(decoration: TextDecoration.underline))
-            ])),
+        if (widget.role != UserRole.admin)
+          Center(
+            child: GestureDetector(
+              child: RichText(
+                  text: TextSpan(text: 'I don\'t have an account? ', children: [
+                TextSpan(
+                    text: 'Create an account',
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        if (widget.role == UserRole.owner) {
+                          Get.to(() => const OwnerSignup());
+                        } else if (widget.role == UserRole.walker) {
+                          Get.to(() => const WalkerSignupScreen());
+                        } else {
+                          Get.to(() => const AdminSignup());
+                        }
+                      },
+                    style:
+                        const TextStyle(decoration: TextDecoration.underline))
+              ])),
+            ),
           ),
-        ),
       ],
     ));
   }

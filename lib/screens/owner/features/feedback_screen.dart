@@ -39,7 +39,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
               style: TextStyle(fontSize: 12, color: Colors.grey)),
           const SizedBox(height: 30),
           RatingBar.builder(
-            initialRating: 5,
+            initialRating: 3,
             minRating: 1,
             direction: Axis.horizontal,
             allowHalfRating: true,
@@ -86,9 +86,13 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                 walkerId: widget.order.walkerId,
                 orderId: widget.order.orderId,
               );
-
-              await Provider.of<OwnerProvider>(context, listen: false)
-                  .sendReview(review);
+              if (widget.order.orderId != null) {
+                await Provider.of<OwnerProvider>(context, listen: false)
+                    .sendReview(review);
+              } else {
+                await Provider.of<OwnerProvider>(context, listen: false)
+                    .rateWalker(review);
+              }
               Get.to(() => SuccessDialogScreen(
                     title: 'Success',
                     message: 'Review sent successfully',

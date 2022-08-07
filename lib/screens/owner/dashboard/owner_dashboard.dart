@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dog_walker/models/walker_model.dart';
 import 'package:dog_walker/screens/auth/splash_screen.dart';
+import 'package:dog_walker/screens/owner/dashboard/filter_widget.dart';
 import 'package:dog_walker/screens/owner/dashboard/map_widget.dart';
 import 'package:dog_walker/screens/owner/dashboard/qr_screen.dart';
+import 'package:dog_walker/screens/owner/dashboard/widgets/search_results_screen.dart';
 import 'package:dog_walker/screens/owner/dashboard/widgets/walker_tile.dart';
 import 'package:dog_walker/screens/owner/features/favorite_walker_screen.dart';
 
@@ -20,16 +22,22 @@ class OwnerDashboard extends StatefulWidget {
 }
 
 class _OwnerDashboardState extends State<OwnerDashboard> {
+  final searchTermController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Padding(
-          padding: EdgeInsets.only(bottom: 15),
+        title: Padding(
+          padding: const EdgeInsets.only(bottom: 15),
           child: TextField(
-            decoration: InputDecoration(
+            controller: searchTermController,
+            textInputAction: TextInputAction.search,
+            onSubmitted: ((value) {
+              Get.to(SearchResultsScreen(searchTerm: value));
+            }),
+            decoration: const InputDecoration(
               contentPadding: EdgeInsets.symmetric(horizontal: 10),
               hintText: 'Search Walker',
               hintStyle: TextStyle(color: Colors.grey),
@@ -47,9 +55,15 @@ class _OwnerDashboardState extends State<OwnerDashboard> {
           ),
           InkWell(
               onTap: () {
-                Get.to(() => const FavoriteWalkerScreen());
+                showDialog(
+                    context: context,
+                    builder: (ctx) => Dialog(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15)),
+                          child: const FilterWidget(),
+                        ));
               },
-              child: const Icon(Icons.favorite)),
+              child: const Icon(Icons.filter_alt)),
           const SizedBox(
             width: 10,
           ),
