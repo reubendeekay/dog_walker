@@ -7,35 +7,6 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:611084270089:android:93b9bf7532fc63146c96d8",
-        "android_client_info": {
-          "package_name": "com.example.dog_walker"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "611084270089-0gfpt83b1b1b6gvfk5c3pt7bfb2oe246.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAVa40Q8Yr8fHSmfGpvaSQ-iJa3MprriIY"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "611084270089-0gfpt83b1b1b6gvfk5c3pt7bfb2oe246.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
         "mobilesdk_app_id": "1:611084270089:android:707eb14cdff87f876c96d8",
         "android_client_info": {
           "package_name": "com.example.dogwalkerandroid"
@@ -66,6 +37,49 @@
             {
               "client_id": "611084270089-0gfpt83b1b1b6gvfk5c3pt7bfb2oe246.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "611084270089-u8igbllugt0ro250l0baskot75kccgpq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.dogWalker"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:611084270089:android:195d0e1a149780c86c96d8",
+        "android_client_info": {
+          "package_name": "com.example.walker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "611084270089-0gfpt83b1b1b6gvfk5c3pt7bfb2oe246.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVa40Q8Yr8fHSmfGpvaSQ-iJa3MprriIY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "611084270089-0gfpt83b1b1b6gvfk5c3pt7bfb2oe246.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "611084270089-u8igbllugt0ro250l0baskot75kccgpq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.dogWalker"
+              }
             }
           ]
         }

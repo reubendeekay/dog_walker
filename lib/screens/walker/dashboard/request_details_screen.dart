@@ -1,7 +1,10 @@
+import 'package:dog_walker/constants.dart';
 import 'package:dog_walker/models/order_model.dart';
 import 'package:dog_walker/providers/walker_provider.dart';
 import 'package:dog_walker/widgets/custom_button.dart';
+import 'package:dog_walker/widgets/success_dialog_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/route_manager.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:provider/provider.dart';
 
@@ -93,15 +96,59 @@ class RequestDetailsScreen extends StatelessWidget {
           ),
         ),
         const Spacer(),
-        if (order.status == 'pending')
-          CustomButton(
-            onPressed: () async {
-              await Provider.of<WalkerProvider>(context, listen: false)
-                  .acceptRejectOrder(order.orderId!, true);
-              Navigator.pop(context);
-            },
-            text: 'CONTINUE',
-            textColor: Colors.white,
+        if (order.paymentStatus == 'pending')
+          Row(
+            children: [
+              Expanded(
+                child: CustomButton(
+                  onPressed: () async {
+                    try {
+                      await Provider.of<WalkerProvider>(context, listen: false)
+                          .acceptRejectOrder(order.orderId!, true);
+
+                      Get.to(() => SuccessDialogScreen(
+                          title: 'Request\nSent',
+                          message:
+                              'Good work leads to more requests!!!\nHave a good day.',
+                          onComplete: () {}));
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(e.toString()),
+                        ),
+                      );
+                    }
+                  },
+                  text: 'CONTINUE',
+                  textColor: Colors.white,
+                  color: kPrimaryColor,
+                  margin: 5,
+                ),
+              ),
+              Expanded(
+                child: CustomButton(
+                  onPressed: () async {
+                    try {
+                      await Provider.of<WalkerProvider>(context, listen: false)
+                          .acceptRejectOrder(order.orderId!, false);
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text('Request rejected'),
+                      ));
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(e.toString()),
+                        ),
+                      );
+                    }
+                  },
+                  text: 'REJECT',
+                  textColor: Colors.white,
+                  color: Colors.red,
+                  margin: 5,
+                ),
+              ),
+            ],
           ),
         const SizedBox(
           height: 15,

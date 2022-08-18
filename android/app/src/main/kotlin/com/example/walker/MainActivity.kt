@@ -1,4 +1,4 @@
-package com.example.dog_walker
+package com.example.walker
 
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.android.FlutterFragmentActivity

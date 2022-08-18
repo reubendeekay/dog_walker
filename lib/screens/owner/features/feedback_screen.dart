@@ -86,6 +86,11 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                 walkerId: widget.order.walkerId,
                 orderId: widget.order.orderId,
               );
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Submitting Feedback'),
+                ),
+              );
               if (widget.order.orderId != null) {
                 await Provider.of<OwnerProvider>(context, listen: false)
                     .sendReview(review);

@@ -6,8 +6,11 @@ class OrderModel {
   final String? userId;
   final String? totalCost;
   final String? time;
+  final String? date;
+  final String? orderTime;
   final String? totalTime;
   final String? walkerId;
+  final String? paymentStatus;
   final String? status;
   OwnerModel? owner;
 
@@ -19,6 +22,9 @@ class OrderModel {
       this.walkerId,
       this.totalTime,
       this.status = 'pending',
+      this.paymentStatus = 'pending',
+      this.orderTime,
+      this.date,
       this.owner,
       this.time});
 
@@ -32,6 +38,9 @@ class OrderModel {
       'walker_id': walkerId,
       'total_time': totalTime,
       'status': status,
+      'paymentStatus': paymentStatus,
+      'time': orderTime,
+      'date': orderDate,
     };
   }
 
@@ -45,6 +54,9 @@ class OrderModel {
       walkerId: json['walker_id'] as String,
       totalTime: json['total_time'] as String,
       status: json['status'] as String,
+      paymentStatus: json['paymentStatus'] as String,
+      orderTime: json['time'] as String,
+      date: json['date'] as String,
     );
   }
 }

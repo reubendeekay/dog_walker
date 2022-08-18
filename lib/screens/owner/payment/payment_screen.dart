@@ -103,17 +103,17 @@ class _PaymentScreenState extends State<PaymentScreen> {
           ),
           CustomButton(
             onPressed: () async {
-              final owner =
-                  Provider.of<AuthProvider>(context, listen: false).owner!;
-              final request = BraintreePayPalRequest(amount: '13.37');
-              final result = await Braintree.requestPaypalNonce(
-                tokenizationKey,
-                request,
-              );
-              if (result != null) {
-                showNonce(result, context);
-              }
-
+              // final owner =
+              //     Provider.of<AuthProvider>(context, listen: false).owner!;
+              // final request = BraintreePayPalRequest(amount: '13.37');
+              // final result = await Braintree.requestPaypalNonce(
+              //   tokenizationKey,
+              //   request,
+              // );
+              // if (result != null) {
+              //   showNonce(result, context);
+              // }
+              await completePayment(context);
               // } catch (e) {
               //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               //     content: Text(e.toString()),

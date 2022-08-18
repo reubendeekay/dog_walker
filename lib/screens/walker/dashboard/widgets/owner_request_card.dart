@@ -110,7 +110,7 @@ class OwnerRequestCard extends StatelessWidget {
                 )
               ],
             ),
-            if (order.status == 'pending')
+            if (order.paymentStatus == 'pending')
               const SizedBox(
                 height: 10,
               ),

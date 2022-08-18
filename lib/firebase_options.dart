@@ -25,7 +25,10 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -55,7 +58,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAVa40Q8Yr8fHSmfGpvaSQ-iJa3MprriIY',
-    appId: '1:611084270089:android:93b9bf7532fc63146c96d8',
+    appId: '1:611084270089:android:195d0e1a149780c86c96d8',
     messagingSenderId: '611084270089',
     projectId: 'dogwalkerapp-64ed7',
     storageBucket: 'dogwalkerapp-64ed7.appspot.com',
@@ -63,23 +66,12 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDZnRCMEnpFFw4CEjVbbtfiAoHm8mnlk54',
-    appId: '1:611084270089:ios:b22171a1ecf3e7eb6c96d8',
+    appId: '1:611084270089:ios:2724b10a79f55db76c96d8',
     messagingSenderId: '611084270089',
     projectId: 'dogwalkerapp-64ed7',
     storageBucket: 'dogwalkerapp-64ed7.appspot.com',
     androidClientId: '611084270089-u8j9tef7q4p0rt9bkb8bldr4aclkuffs.apps.googleusercontent.com',
-    iosClientId: '611084270089-u8igbllugt0ro250l0baskot75kccgpq.apps.googleusercontent.com',
-    iosBundleId: 'com.example.dogWalker',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyDZnRCMEnpFFw4CEjVbbtfiAoHm8mnlk54',
-    appId: '1:611084270089:ios:b22171a1ecf3e7eb6c96d8',
-    messagingSenderId: '611084270089',
-    projectId: 'dogwalkerapp-64ed7',
-    storageBucket: 'dogwalkerapp-64ed7.appspot.com',
-    androidClientId: '611084270089-u8j9tef7q4p0rt9bkb8bldr4aclkuffs.apps.googleusercontent.com',
-    iosClientId: '611084270089-u8igbllugt0ro250l0baskot75kccgpq.apps.googleusercontent.com',
-    iosBundleId: 'com.example.dogWalker',
+    iosClientId: '611084270089-v3s36n77li00nn8fjl1p3k1h82oie47s.apps.googleusercontent.com',
+    iosBundleId: 'com.example.walker',
   );
 }

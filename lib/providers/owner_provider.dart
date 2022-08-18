@@ -70,6 +70,7 @@ class OwnerProvider with ChangeNotifier {
         .doc(order.orderId)
         .update({
       'status': 'paid',
+      'paymentStatus': 'paid',
     });
     notifyListeners();
   }
