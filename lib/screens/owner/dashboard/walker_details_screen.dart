@@ -221,9 +221,11 @@ class _WalkerDetailsScreenState extends State<WalkerDetailsScreen> {
                     : () async {
                         final order = OrderModel(
                           walkerId: widget.walker.userId,
-                          orderDate:
-                              DateFormat('dd/MM/yyyy').format(selectedDate!),
+                          date: DateFormat('dd/MM/yyyy').format(selectedDate!),
                           time: selectedTime!.format(context),
+                          orderDate:
+                              DateFormat('dd/MM/yyyy').format(DateTime.now()),
+                          orderTime: TimeOfDay.now().format(context),
                           totalCost: totalAmount.toStringAsFixed(2),
                           totalTime: hours.toString(),
                           userId: FirebaseAuth.instance.currentUser!.uid,

@@ -61,6 +61,11 @@ class WalkerDashboard extends StatelessWidget {
                           child: CircularProgressIndicator(),
                         );
                       }
+                      if (snapshot.data == null) {
+                        return const Center(
+                          child: Text('No requests yet'),
+                        );
+                      }
 
                       if (snapshot.data!.isEmpty) {
                         return const Center(

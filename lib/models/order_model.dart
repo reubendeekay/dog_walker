@@ -34,13 +34,13 @@ class OrderModel {
       'order_date': orderDate,
       'user_id': userId,
       'total_cost': totalCost,
-      'order_time': time,
+      'order_time': orderTime,
       'walker_id': walkerId,
       'total_time': totalTime,
       'status': status,
       'paymentStatus': paymentStatus,
-      'time': orderTime,
-      'date': orderDate,
+      'time': time,
+      'date': date,
     };
   }
 

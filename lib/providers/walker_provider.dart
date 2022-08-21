@@ -46,6 +46,7 @@ class WalkerProvider with ChangeNotifier {
       });
     }
     notifyListeners();
+    print('ORDERS $finalOrders');
     return finalOrders;
   }
 
