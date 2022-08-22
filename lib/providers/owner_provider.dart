@@ -23,7 +23,7 @@ class OwnerProvider with ChangeNotifier {
         .collection('DogWalker')
         .doc(user_Id)
         .collection('OwnerRequest');
-    final id = ref.id;
+    final id = ref.doc().id;
     order.orderId = id;
 
     await FirebaseFirestore.instance
