@@ -18,7 +18,7 @@ class FeedbackScreen extends StatefulWidget {
 }
 
 class _FeedbackScreenState extends State<FeedbackScreen> {
-  double? rating;
+  double rating = 3.0;
   String? feedback;
   @override
   Widget build(BuildContext context) {
@@ -49,9 +49,9 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
               Icons.star,
               color: kPrimaryColor,
             ),
-            onRatingUpdate: (rating) {
+            onRatingUpdate: (rat) {
               setState(() {
-                rating = rating;
+                rating = rat;
               });
             },
           ),
@@ -66,6 +66,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                   feedback = value;
                 });
               },
+              style: TextStyle(color: kSecondaryColor),
               decoration: const InputDecoration(
                 border: InputBorder.none,
                 hintText: 'Description',
