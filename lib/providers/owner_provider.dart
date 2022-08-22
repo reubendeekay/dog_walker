@@ -117,7 +117,7 @@ class OwnerProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<Map<String, dynamic>> verifyWalker(String orderId) async {
+  Future<Map<String, dynamic>?> verifyWalker(String orderId) async {
     final orderData = await FirebaseFirestore.instance
         .collection('orders')
         .doc(orderId)
@@ -135,11 +135,14 @@ class OwnerProvider with ChangeNotifier {
 
     final walker = WalkerModel.fromJson(walkerData);
     notifyListeners();
-
-    return {
-      'walker': walker,
-      'order': order,
-    };
+    if (order.status == 'paid') {
+      return {
+        'walker': walker,
+        'order': order,
+      };
+    } else {
+      return null;
+    }
   }
 
   Future<List<WalkerModel>> searchWalker(

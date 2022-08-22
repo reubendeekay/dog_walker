@@ -58,17 +58,26 @@ class OwnerNotificationTile extends StatelessWidget {
                     Expanded(
                         child: CustomButton(
                       onPressed: () async {
-                        await completePayment(context);
-                        await Provider.of<OwnerProvider>(context, listen: false)
-                            .payForWalker(order);
-                        Get.to(() => SuccessDialogScreen(
-                              title: 'Payment\nSuccessful',
-                              message:
-                                  'You have successfully paid for the walker. Review the walker after service is completed.',
-                              onComplete: () {
-                                Get.to(() => FeedbackScreen(order: order));
-                              },
-                            ));
+                        final isDone = await completePayment(context);
+                        if (isDone) {
+                          await Provider.of<OwnerProvider>(context,
+                                  listen: false)
+                              .payForWalker(order);
+                          Get.to(() => SuccessDialogScreen(
+                                title: 'Payment\nSuccessful',
+                                message:
+                                    'You have successfully paid for the walker. Review the walker after service is completed.',
+                                onComplete: () {
+                                  Get.to(() => FeedbackScreen(order: order));
+                                },
+                              ));
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Payment failed'),
+                            ),
+                          );
+                        }
                       },
                       radius: 2,
                       text: 'PAY',

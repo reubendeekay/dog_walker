@@ -143,7 +143,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 }
 
-Future<void> completePayment(BuildContext context) async {
+Future<bool> completePayment(BuildContext context) async {
   var request = BraintreeDropInRequest(
     tokenizationKey: tokenizationKey,
     collectDeviceData: true,
@@ -161,6 +161,9 @@ Future<void> completePayment(BuildContext context) async {
   final result = await BraintreeDropIn.start(request);
   if (result != null) {
     showNonce(result.paymentMethodNonce, context);
+    return true;
+  } else {
+    return false;
   }
 }
 
@@ -168,20 +171,16 @@ void showNonce(BraintreePaymentMethodNonce nonce, BuildContext context) {
   showDialog(
     context: context,
     builder: (_) => AlertDialog(
-      title: Text('Payment method nonce:'),
+      title: const Text('Payment Verified'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Text('Nonce: ${nonce.nonce}'),
-          SizedBox(height: 16),
-          Text('Type label: ${nonce.typeLabel}'),
-          SizedBox(height: 16),
-          Text('Description: ${nonce.description}'),
+        children: const [
+          Text('Thank you for your payment!. Wait for the walker to arrive.'),
         ],
       ),
     ),
   );
 }
 
-final String tokenizationKey = 'sandbox_8hxpnkht_kzdtzv2btm4p7s5j';
+String tokenizationKey = 'sandbox_8hxpnkht_kzdtzv2btm4p7s5j';
