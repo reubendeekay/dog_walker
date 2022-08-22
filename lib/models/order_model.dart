@@ -49,7 +49,7 @@ class OrderModel {
       orderId: json['order_id'] as String,
       orderDate: json['order_date'] as String,
       userId: json['user_id'] as String,
-      totalCost: json['total_cost'] as String,
+      totalCost: json['total_cost'].toString(),
       time: json['order_time'] as String,
       walkerId: json['walker_id'] as String,
       totalTime: json['total_time'] as String,

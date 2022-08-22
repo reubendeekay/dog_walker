@@ -19,7 +19,7 @@ class FeedbackScreen extends StatefulWidget {
 
 class _FeedbackScreenState extends State<FeedbackScreen> {
   double rating = 3.0;
-  String? feedback;
+  String feedback = ' ';
   @override
   Widget build(BuildContext context) {
     return Scaffold(

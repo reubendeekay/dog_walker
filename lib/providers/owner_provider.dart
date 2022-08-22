@@ -34,35 +34,45 @@ class OwnerProvider with ChangeNotifier {
     await ref.doc(id).set(order.toJson());
   }
 
-  Future<void> getNotifications() async {
+  Future<List<OrderModel>> getNotifications() async {
     final uid = FirebaseAuth.instance.currentUser!.uid;
-    final userId = await FirebaseFirestore.instance
-        .collection('DogOwner')
-        .where('user_id', isEqualTo: uid)
-        .get()
-        .then((value) => value.docs.first.id);
-    final ref = FirebaseFirestore.instance
-        .collection('DogOwner')
-        .doc(userId)
-        .collection('WalkerAccepted');
-    final data = await ref.where('status', isEqualTo: 'paid').get();
+
+    final nots = await FirebaseFirestore.instance.collection('DogWalker').get();
+
+    final List<OrderModel> notifications = [];
+
+    for (var doc in nots.docs) {
+      final notis = await FirebaseFirestore.instance
+          .collection('DogWalker')
+          .doc(doc.id)
+          .collection('OwnerRequest')
+          .where('user_id', isEqualTo: uid)
+          .get();
+      print(notis.docs.length);
+      for (var docu in notis.docs) {
+        notifications.add(OrderModel.fromJson(docu));
+      }
+    }
+    return notifications;
   }
 
   Future<void> payForWalker(OrderModel order) async {
     final uid = FirebaseAuth.instance.currentUser!.uid;
 
-    final userId = await FirebaseFirestore.instance
-        .collection('DogOwner')
-        .where('user_id', isEqualTo: uid)
+    final walkerCollection = await FirebaseFirestore.instance
+        .collection('DogWalker')
+        .where('user_id', isEqualTo: order.walkerId)
+        .get();
+
+    walkerCollection.docs.first.reference
+        .collection('OwnerRequest')
+        .where('order_id', isEqualTo: order.orderId)
         .get()
-        .then((value) => value.docs.first.id);
-    await FirebaseFirestore.instance
-        .collection('DogOwner')
-        .doc(userId)
-        .collection('WalkerAccepted')
-        .doc(order.orderId)
-        .update({
-      'status': 'paid',
+        .then((value) {
+      value.docs.first.reference.update({
+        'status': 'paid',
+        'paymentStatus': 'paid',
+      });
     });
 
     await FirebaseFirestore.instance

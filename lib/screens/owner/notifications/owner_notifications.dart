@@ -33,19 +33,19 @@ class OwnerNotificationsScreen extends StatelessWidget {
           )
         ],
       ),
-      body: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection('orders')
-              .where('user_id', isEqualTo: uid)
-              .snapshots(),
+      body: FutureBuilder<List<OrderModel>>(
+          future: Provider.of<OwnerProvider>(context, listen: false)
+              .getNotifications(),
           builder: (context, snapshot) {
-            if (!snapshot.hasData) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
                 child: CircularProgressIndicator(),
               );
             }
-
-            if (snapshot.data!.docs.isEmpty) {
+            final notifications = snapshot.data!
+                .where((doc) => doc.status!.toLowerCase() == 'accepted')
+                .toList();
+            if (notifications.isEmpty) {
               return const Center(
                 child: Text('No notifications'),
               );
@@ -53,8 +53,8 @@ class OwnerNotificationsScreen extends StatelessWidget {
 
             return ListView(
               padding: const EdgeInsets.symmetric(horizontal: 15),
-              children: List.generate(snapshot.data!.docs.length, (index) {
-                final data = OrderModel.fromJson(snapshot.data!.docs[index]);
+              children: List.generate(notifications.length, (index) {
+                final data = notifications[index];
 
                 data.owner = owner;
                 return OwnerNotificationTile(
