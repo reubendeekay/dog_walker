@@ -28,7 +28,7 @@ class OwnerNotificationTile extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      order.owner!.name!,
+                      order.walker!.name!,
                       style: const TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.w500,
@@ -50,7 +50,7 @@ class OwnerNotificationTile extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      '${order.owner!.age} yrs EXP',
+                      '${order.walker!.experience} yrs EXP',
                       style: const TextStyle(
                         color: Colors.black,
                       ),

@@ -8,16 +8,23 @@ import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
 import 'package:provider/provider.dart';
 
-class OwnerRequestCard extends StatelessWidget {
-  const OwnerRequestCard({Key? key, required this.order}) : super(key: key);
+class OwnerRequestCard extends StatefulWidget {
+  const OwnerRequestCard({Key? key, required this.order, this.onPressed})
+      : super(key: key);
   final OrderModel order;
+  final Function? onPressed;
 
+  @override
+  State<OwnerRequestCard> createState() => _OwnerRequestCardState();
+}
+
+class _OwnerRequestCardState extends State<OwnerRequestCard> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
         Get.to(() => RequestDetailsScreen(
-              order: order,
+              order: widget.order,
             ));
       },
       child: Container(
@@ -34,7 +41,7 @@ class OwnerRequestCard extends StatelessWidget {
                   width: 100,
                   height: 90,
                   child: Image.network(
-                    order.owner!.image!,
+                    widget.order.owner!.image!,
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -46,7 +53,7 @@ class OwnerRequestCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        order.owner!.name!,
+                        widget.order.owner!.name!,
                         style: const TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.w500,
@@ -56,7 +63,7 @@ class OwnerRequestCard extends StatelessWidget {
                         height: 5,
                       ),
                       Text(
-                        '${order.owner!.age} yrs',
+                        '${widget.order.owner!.age} yrs',
                         style: const TextStyle(
                           fontSize: 12,
                           color: Colors.black,
@@ -66,7 +73,7 @@ class OwnerRequestCard extends StatelessWidget {
                         height: 5,
                       ),
                       Text(
-                        order.owner!.address!,
+                        widget.order.owner!.address!,
                         style: const TextStyle(
                           color: Colors.black,
                         ),
@@ -75,7 +82,7 @@ class OwnerRequestCard extends StatelessWidget {
                         height: 10,
                       ),
                       Text(
-                        'Arrive on ${order.orderDate} at ${order.time}',
+                        'Arrive on ${widget.order.orderDate} at ${widget.order.time}',
                         style: const TextStyle(
                           color: Colors.black,
                         ),
@@ -89,7 +96,7 @@ class OwnerRequestCard extends StatelessWidget {
                 Column(
                   children: [
                     Text(
-                      '${order.totalTime} hrs',
+                      '${widget.order.totalTime} hrs',
                       style: const TextStyle(
                         fontSize: 12,
                         color: Colors.black,
@@ -99,7 +106,7 @@ class OwnerRequestCard extends StatelessWidget {
                       height: 5,
                     ),
                     Text(
-                      '\$${order.totalCost}',
+                      '\$${widget.order.totalCost}',
                       style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w500,
@@ -110,11 +117,11 @@ class OwnerRequestCard extends StatelessWidget {
                 )
               ],
             ),
-            if (order.paymentStatus == 'pending')
+            if (widget.order.paymentStatus == 'pending')
               const SizedBox(
                 height: 10,
               ),
-            if (order.status == 'pending')
+            if (widget.order.status == 'pending')
               Row(
                 children: [
                   Expanded(
@@ -123,8 +130,13 @@ class OwnerRequestCard extends StatelessWidget {
                         try {
                           await Provider.of<WalkerProvider>(context,
                                   listen: false)
-                              .acceptRejectOrder(order.orderId!, true);
+                              .acceptRejectOrder(widget.order.orderId!, true);
 
+                          setState(() {
+                            if (widget.onPressed != null) {
+                              widget.onPressed!();
+                            }
+                          });
                           Get.to(() => SuccessDialogScreen(
                               title: 'Request\nSent',
                               message:
@@ -150,7 +162,12 @@ class OwnerRequestCard extends StatelessWidget {
                         try {
                           await Provider.of<WalkerProvider>(context,
                                   listen: false)
-                              .acceptRejectOrder(order.orderId!, false);
+                              .acceptRejectOrder(widget.order.orderId!, false);
+                          setState(() {
+                            if (widget.onPressed != null) {
+                              widget.onPressed!();
+                            }
+                          });
                           ScaffoldMessenger.of(context)
                               .showSnackBar(const SnackBar(
                             content: Text('Request rejected'),

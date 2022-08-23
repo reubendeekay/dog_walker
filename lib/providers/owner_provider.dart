@@ -48,9 +48,18 @@ class OwnerProvider with ChangeNotifier {
           .collection('OwnerRequest')
           .where('user_id', isEqualTo: uid)
           .get();
+
+      final walkerData = await FirebaseFirestore.instance
+          .collection('DogWalker')
+          .doc(doc.id)
+          .get();
+      final walker = WalkerModel.fromJson(walkerData);
       print(notis.docs.length);
       for (var docu in notis.docs) {
-        notifications.add(OrderModel.fromJson(docu));
+        final order = OrderModel.fromJson(docu);
+        order.walker = walker;
+
+        notifications.add(order);
       }
     }
     return notifications;

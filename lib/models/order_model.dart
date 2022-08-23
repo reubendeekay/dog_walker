@@ -1,4 +1,5 @@
 import 'package:dog_walker/models/owner_model.dart';
+import 'package:dog_walker/models/walker_model.dart';
 
 class OrderModel {
   String? orderId;
@@ -13,6 +14,7 @@ class OrderModel {
   final String? paymentStatus;
   final String? status;
   OwnerModel? owner;
+  WalkerModel? walker;
 
   OrderModel(
       {this.orderId,

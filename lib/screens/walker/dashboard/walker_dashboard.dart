@@ -10,9 +10,14 @@ import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
 import 'package:provider/provider.dart';
 
-class WalkerDashboard extends StatelessWidget {
+class WalkerDashboard extends StatefulWidget {
   const WalkerDashboard({Key? key}) : super(key: key);
 
+  @override
+  State<WalkerDashboard> createState() => _WalkerDashboardState();
+}
+
+class _WalkerDashboardState extends State<WalkerDashboard> {
   @override
   Widget build(BuildContext context) {
     final walker = Provider.of<AuthProvider>(context, listen: false).walker;
@@ -79,6 +84,11 @@ class WalkerDashboard extends StatelessWidget {
                               data.length,
                               (index) => OwnerRequestCard(
                                     order: data[index],
+                                    onPressed: () {
+                                      setState(() {});
+
+                                      //Reload the Future
+                                    },
                                   )));
                     }))
           ],
