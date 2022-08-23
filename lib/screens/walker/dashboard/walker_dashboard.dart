@@ -59,7 +59,7 @@ class _WalkerDashboardState extends State<WalkerDashboard> {
             Expanded(
                 child: FutureBuilder<List<OrderModel>>(
                     future: Provider.of<WalkerProvider>(context, listen: false)
-                        .getOrders(),
+                        .getOrders(isDashboard: true),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(

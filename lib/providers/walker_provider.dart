@@ -6,7 +6,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
 class WalkerProvider with ChangeNotifier {
-  Future<List<OrderModel>> getOrders({bool? accepted}) async {
+  Future<List<OrderModel>> getOrders(
+      {bool? accepted, bool isDashboard = false}) async {
     String getParameters() {
       if (accepted != null && accepted) {
         return 'accepted';
@@ -25,12 +26,18 @@ class WalkerProvider with ChangeNotifier {
         .get()
         .then((value) => value.docs.first.id);
 
-    final orderData = await FirebaseFirestore.instance
-        .collection('DogWalker')
-        .doc(id)
-        .collection('OwnerRequest')
-        .where('status', isEqualTo: getParameters())
-        .get();
+    final orderData = isDashboard
+        ? await FirebaseFirestore.instance
+            .collection('DogWalker')
+            .doc(id)
+            .collection('OwnerRequest')
+            .get()
+        : await FirebaseFirestore.instance
+            .collection('DogWalker')
+            .doc(id)
+            .collection('OwnerRequest')
+            .where('status', isEqualTo: getParameters())
+            .get();
 
     final orders =
         orderData.docs.map((doc) => OrderModel.fromJson(doc)).toList();
@@ -46,7 +53,7 @@ class WalkerProvider with ChangeNotifier {
       });
     }
     notifyListeners();
-    print('ORDERS $finalOrders');
+
     return finalOrders;
   }
 
