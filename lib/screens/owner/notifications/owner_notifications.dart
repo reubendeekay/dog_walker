@@ -21,7 +21,7 @@ class OwnerNotificationsScreen extends StatelessWidget {
         actions: [
           TextButton(
               onPressed: () async {
-                await Provider.of<OwnerProvider>(context, listen: false)
+                Provider.of<OwnerProvider>(context, listen: false)
                     .deleteAllNotifications();
               },
               child: const Text(

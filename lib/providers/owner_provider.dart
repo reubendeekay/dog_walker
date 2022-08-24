@@ -36,6 +36,10 @@ class OwnerProvider with ChangeNotifier {
     await ref.doc(id).set(order.toJson());
   }
 
+  void deleteAllNotifications() {
+    hasClearedNotifications = true;
+  }
+
   Future<List<OrderModel>> getNotifications() async {
     final uid = FirebaseAuth.instance.currentUser!.uid;
     if (!hasClearedNotifications) {
