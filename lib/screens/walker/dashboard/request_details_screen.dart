@@ -96,7 +96,7 @@ class RequestDetailsScreen extends StatelessWidget {
           ),
         ),
         const Spacer(),
-        if (order.paymentStatus == 'pending')
+        if (order.status == 'pending')
           Row(
             children: [
               Expanded(

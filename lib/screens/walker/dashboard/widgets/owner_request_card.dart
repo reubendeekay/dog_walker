@@ -117,7 +117,7 @@ class _OwnerRequestCardState extends State<OwnerRequestCard> {
                 )
               ],
             ),
-            if (widget.order.paymentStatus == 'pending')
+            if (widget.order.status == 'pending')
               const SizedBox(
                 height: 10,
               ),

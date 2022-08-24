@@ -108,10 +108,8 @@ class OwnerNotificationTile extends StatelessWidget {
           right: -7.5,
           child: InkWell(
               onTap: () async {
-                await FirebaseFirestore.instance
-                    .collection('orders')
-                    .doc(order.orderId)
-                    .delete();
+                await Provider.of<OwnerProvider>(context, listen: false)
+                    .blackListNotification(order.orderId!);
               },
               child: const Icon(Icons.cancel, color: Colors.red, size: 30)),
         )

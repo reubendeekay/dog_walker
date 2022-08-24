@@ -6,6 +6,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
 class OwnerProvider with ChangeNotifier {
+  bool hasClearedNotifications = false;
+  List<String> removedNotifications = [];
   Future<List<WalkerModel>> getAllWalkers() async {
     final walkerData =
         await FirebaseFirestore.instance.collection('DogWalker').get();
@@ -36,33 +38,39 @@ class OwnerProvider with ChangeNotifier {
 
   Future<List<OrderModel>> getNotifications() async {
     final uid = FirebaseAuth.instance.currentUser!.uid;
+    if (!hasClearedNotifications) {
+      final nots =
+          await FirebaseFirestore.instance.collection('DogWalker').get();
 
-    final nots = await FirebaseFirestore.instance.collection('DogWalker').get();
+      final List<OrderModel> notifications = [];
 
-    final List<OrderModel> notifications = [];
+      for (var doc in nots.docs) {
+        final notis = await FirebaseFirestore.instance
+            .collection('DogWalker')
+            .doc(doc.id)
+            .collection('OwnerRequest')
+            .where('user_id', isEqualTo: uid)
+            .get();
 
-    for (var doc in nots.docs) {
-      final notis = await FirebaseFirestore.instance
-          .collection('DogWalker')
-          .doc(doc.id)
-          .collection('OwnerRequest')
-          .where('user_id', isEqualTo: uid)
-          .get();
+        final walkerData = await FirebaseFirestore.instance
+            .collection('DogWalker')
+            .doc(doc.id)
+            .get();
+        final walker = WalkerModel.fromJson(walkerData);
+        print(notis.docs.length);
+        for (var docu in notis.docs) {
+          final order = OrderModel.fromJson(docu);
+          order.walker = walker;
 
-      final walkerData = await FirebaseFirestore.instance
-          .collection('DogWalker')
-          .doc(doc.id)
-          .get();
-      final walker = WalkerModel.fromJson(walkerData);
-      print(notis.docs.length);
-      for (var docu in notis.docs) {
-        final order = OrderModel.fromJson(docu);
-        order.walker = walker;
-
-        notifications.add(order);
+          notifications.add(order);
+        }
       }
+      notifications.removeWhere(
+          (element) => removedNotifications.contains(element.orderId));
+      return notifications;
+    } else {
+      return [];
     }
-    return notifications;
   }
 
   Future<void> payForWalker(OrderModel order) async {
@@ -179,19 +187,8 @@ class OwnerProvider with ChangeNotifier {
     return searchedWalkers;
   }
 
-  Future<void> deleteAllNotifications() async {
-    final uid = FirebaseAuth.instance.currentUser!.uid;
-    final notData = await FirebaseFirestore.instance
-        .collection('orders')
-        .where('user_id', isEqualTo: uid)
-        .get();
-
-    for (var doc in notData.docs) {
-      await FirebaseFirestore.instance
-          .collection('orders')
-          .doc(doc.id)
-          .delete();
-    }
+  Future<void> blackListNotification(String orderId) async {
+    removedNotifications.add(orderId);
     notifyListeners();
   }
 
